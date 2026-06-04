@@ -13,7 +13,7 @@ interface Property {
     beds: number;
     baths: number;
     sqft: number;
-    image: string;
+    image_path: string;
     featured: boolean;
     features: string[];
     status: string;
@@ -66,9 +66,9 @@ export default function Show({ property, relatedProperties }: ShowProps) {
                         <div className="lg:col-span-8 space-y-8">
                             {/* Main image */}
                             <div className="relative aspect-video rounded-3xl overflow-hidden shadow-md border border-zinc-200 dark:border-zinc-800 bg-zinc-100">
-                                <img 
-                                    src={property.image} 
-                                    alt={property.title} 
+                                <img
+                                    src={property.image_path}
+                                    alt={property.title}
                                     className="object-cover w-full h-full"
                                 />
                                 <span className="absolute top-6 left-6 bg-orange-600 text-white text-xs font-extrabold px-4 py-2 rounded-xl uppercase tracking-wider shadow-lg">
@@ -154,7 +154,7 @@ export default function Show({ property, relatedProperties }: ShowProps) {
 
                         {/* Right: Contact Lead Form */}
                         <div className="lg:col-span-4 space-y-6">
-                            <div className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-850 p-6 sm:p-8 rounded-3xl space-y-6">
+                            <div className="bg-zinc-50 dark:bg-zinc-900  p-6 sm:p-8 rounded-3xl space-y-6">
                                 <div className="text-center pb-4 border-b border-zinc-200 dark:border-zinc-800 space-y-4">
                                     <div className="w-16 h-16 rounded-full overflow-hidden bg-zinc-200 mx-auto shadow border-2 border-white dark:border-zinc-800">
                                         <img src="https://preview.colorlib.com/theme/hus/img/testmonial/author.png" alt="Sarah Jenkins" className="w-full h-full object-cover" />
@@ -169,8 +169,8 @@ export default function Show({ property, relatedProperties }: ShowProps) {
                                 <form onSubmit={handleFormSubmit} className="space-y-4 text-left">
                                     <div>
                                         <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">Your Name</label>
-                                        <input 
-                                            type="text" 
+                                        <input
+                                            type="text"
                                             required
                                             value={data.name}
                                             onChange={(e) => setData('name', e.target.value)}
@@ -181,8 +181,8 @@ export default function Show({ property, relatedProperties }: ShowProps) {
 
                                     <div>
                                         <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">Email Address</label>
-                                        <input 
-                                            type="email" 
+                                        <input
+                                            type="email"
                                             required
                                             value={data.email}
                                             onChange={(e) => setData('email', e.target.value)}
@@ -193,8 +193,8 @@ export default function Show({ property, relatedProperties }: ShowProps) {
 
                                     <div>
                                         <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">Phone Number (Optional)</label>
-                                        <input 
-                                            type="text" 
+                                        <input
+                                            type="text"
                                             value={data.phone}
                                             onChange={(e) => setData('phone', e.target.value)}
                                             className="w-full bg-white dark:bg-zinc-950 border border-zinc-250 dark:border-zinc-800 rounded-xl py-2.5 px-3 text-sm text-zinc-850 dark:text-zinc-200 outline-none focus:border-orange-500 transition-colors"
@@ -204,7 +204,7 @@ export default function Show({ property, relatedProperties }: ShowProps) {
 
                                     <div>
                                         <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">Custom Message</label>
-                                        <textarea 
+                                        <textarea
                                             required
                                             rows={4}
                                             value={data.message}
@@ -214,7 +214,7 @@ export default function Show({ property, relatedProperties }: ShowProps) {
                                         {errors.message && <p className="text-xs text-red-500 mt-1">{errors.message}</p>}
                                     </div>
 
-                                    <button 
+                                    <button
                                         type="submit"
                                         disabled={processing}
                                         className="w-full py-3 bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white font-bold rounded-xl text-sm transition-all shadow-md shadow-orange-500/10 active:scale-[0.98] flex items-center justify-center gap-1.5"
@@ -236,14 +236,14 @@ export default function Show({ property, relatedProperties }: ShowProps) {
                         <h2 className="text-2xl font-extrabold text-zinc-900 dark:text-white mb-8">Related Properties</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {relatedProperties.map((related) => (
-                                <article 
-                                    key={related.id} 
-                                    className="bg-white dark:bg-zinc-950 rounded-3xl overflow-hidden border border-zinc-200/60 dark:border-zinc-850 shadow-sm hover:shadow-md hover:border-orange-500/20 dark:hover:border-orange-500/20 transition-all duration-300 group"
+                                <article
+                                    key={related.id}
+                                    className="bg-white dark:bg-zinc-950 rounded-3xl overflow-hidden  shadow-sm hover:shadow-md hover:border-orange-500/20 dark:hover:border-orange-500/20 transition-all duration-300 group"
                                 >
                                     <div className="relative aspect-[16/10] overflow-hidden bg-zinc-100">
-                                        <img 
-                                            src={related.image} 
-                                            alt={related.title} 
+                                        <img
+                                            src={related.image_path}
+                                            alt={related.title}
                                             className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
                                             loading="lazy"
                                         />
@@ -264,7 +264,7 @@ export default function Show({ property, relatedProperties }: ShowProps) {
                                             <span className="line-clamp-1">{related.location}</span>
                                         </p>
 
-                                        <Link 
+                                        <Link
                                             href={route('properties.show', related.id)}
                                             className="w-full py-2.5 bg-zinc-50 dark:bg-zinc-900 hover:bg-orange-600 hover:text-white dark:hover:bg-orange-600 text-zinc-900 dark:text-white text-center font-bold text-sm rounded-xl transition-all flex items-center justify-center gap-1 group/btn"
                                         >

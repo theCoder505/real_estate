@@ -41,8 +41,8 @@ export default function Facilities({ facilities }: FacilitiesProps) {
 
             {/* 1. Header Banner */}
             <section className="bg-zinc-900 text-white py-20 relative overflow-hidden">
-                <div className="absolute inset-0 bg-cover bg-center opacity-10" 
-                    style={{ backgroundImage: "url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80')" }} 
+                <div className="absolute inset-0 bg-cover bg-center opacity-10"
+                    style={{ backgroundImage: "url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80')" }}
                 />
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
                     <span className="text-orange-500 font-extrabold text-sm uppercase tracking-wider">What We Provide</span>
@@ -58,9 +58,9 @@ export default function Facilities({ facilities }: FacilitiesProps) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {facilities.map((fac) => (
-                            <div 
-                                key={fac.id} 
-                                className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-850 p-8 rounded-3xl space-y-4 hover:border-orange-500/25 hover:bg-white dark:hover:bg-zinc-950 shadow-sm hover:shadow-md transition-all duration-300"
+                            <div
+                                key={fac.id}
+                                className="bg-zinc-50 dark:bg-zinc-900  p-8 rounded-3xl space-y-4 hover:border-orange-500/25 hover:bg-white dark:hover:bg-zinc-950 shadow-sm hover:shadow-md transition-all duration-300"
                             >
                                 <div className="p-4 bg-orange-600 text-white rounded-2xl inline-block shadow-md shadow-orange-500/10">
                                     {getIconComponent(fac.icon)}
@@ -76,7 +76,7 @@ export default function Facilities({ facilities }: FacilitiesProps) {
             </section>
 
             {/* 3. Detailed Standards / Construction Checklist */}
-            <section className="py-20 bg-zinc-50 dark:bg-zinc-900 border-t border-zinc-200/60 dark:border-zinc-850 transition-colors duration-300">
+            <section className="py-20 bg-zinc-50 dark:bg-zinc-900 transition-colors duration-300">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
                         <div className="lg:col-span-6 space-y-6">
@@ -87,7 +87,7 @@ export default function Facilities({ facilities }: FacilitiesProps) {
                             <p className="text-zinc-650 dark:text-zinc-400 leading-relaxed text-sm sm:text-base">
                                 We enforce strict checklists during all development phases, from site testing to high-end interior installations. Our engineering team conducts routine safety assessments, and every apartment features architectural details focused on spatial optimization.
                             </p>
-                            
+
                             {/* Bullet Checklist */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                                 <div className="flex gap-2 items-start">
@@ -123,9 +123,9 @@ export default function Facilities({ facilities }: FacilitiesProps) {
 
                         <div className="lg:col-span-6">
                             <div className="relative aspect-video rounded-3xl overflow-hidden shadow-xl border border-zinc-200 dark:border-zinc-800">
-                                <img 
-                                    src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=800&q=80" 
-                                    alt="Modern construction" 
+                                <img
+                                    src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=800&q=80"
+                                    alt="Modern construction"
                                     className="object-cover w-full h-full"
                                 />
                             </div>
@@ -142,7 +142,7 @@ export default function Facilities({ facilities }: FacilitiesProps) {
                         Speak directly with our technical supervisor or broker to request blueprints and utility details for your desired property.
                     </p>
                     <div>
-                        <Link 
+                        <Link
                             href={route('contact')}
                             className="inline-flex items-center gap-2 px-6 py-3.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl transition-all shadow-md active:scale-95"
                         >

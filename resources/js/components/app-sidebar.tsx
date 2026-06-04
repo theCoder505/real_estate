@@ -4,29 +4,20 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { BookOpen, LayoutGrid, Settings, Building2, Star, Users, Mail, Shield } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        url: '/dashboard',
-        icon: LayoutGrid,
-    },
+    { title: 'Dashboard',   url: route('admin.dashboard'),          icon: LayoutGrid  },
+    { title: 'Properties',  url: route('admin.properties.index'),   icon: Building2   },
+    { title: 'Blog Posts',  url: route('admin.blog.index'),         icon: BookOpen    },
+    { title: 'Facilities',  url: route('admin.facilities.index'),   icon: Star        },
+    { title: 'Testimonials',url: route('admin.testimonials.index'), icon: Users       },
+    { title: 'Messages',    url: route('admin.contact.index'),      icon: Mail        },
+    { title: 'Settings',    url: route('admin.settings.edit'),      icon: Settings    },
 ];
 
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        url: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        url: 'https://laravel.com/docs/starter-kits',
-        icon: BookOpen,
-    },
-];
+const footerNavItems: NavItem[] = [];
 
 export function AppSidebar() {
     return (

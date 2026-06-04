@@ -58,8 +58,8 @@ export default function About({ stats }: AboutProps) {
 
             {/* 1. Header Banner */}
             <section className="bg-zinc-900 text-white py-20 relative overflow-hidden">
-                <div className="absolute inset-0 bg-cover bg-center opacity-10" 
-                    style={{ backgroundImage: "url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80')" }} 
+                <div className="absolute inset-0 bg-cover bg-center opacity-10"
+                    style={{ backgroundImage: "url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80')" }}
                 />
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
                     <span className="text-orange-500 font-extrabold text-sm uppercase tracking-wider">Our Story</span>
@@ -105,7 +105,7 @@ export default function About({ stats }: AboutProps) {
 
                     {/* Mission and Vision Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                        <div className="bg-zinc-50 dark:bg-zinc-900 p-8 rounded-3xl border border-zinc-200/60 dark:border-zinc-850 space-y-4">
+                        <div className="bg-zinc-50 dark:bg-zinc-900 p-8 rounded-3xl  space-y-4">
                             <div className="p-3 bg-orange-600/10 text-orange-600 rounded-xl inline-block">
                                 <Target className="w-6 h-6" />
                             </div>
@@ -114,7 +114,7 @@ export default function About({ stats }: AboutProps) {
                                 To develop residential and commercial architectures that combine absolute safety, custom technological ease, and environmental sustainability, ensuring clients acquire high-growth building assets.
                             </p>
                         </div>
-                        <div className="bg-zinc-50 dark:bg-zinc-900 p-8 rounded-3xl border border-zinc-200/60 dark:border-zinc-850 space-y-4">
+                        <div className="bg-zinc-50 dark:bg-zinc-900 p-8 rounded-3xl  space-y-4">
                             <div className="p-3 bg-orange-600/10 text-orange-600 rounded-xl inline-block">
                                 <Building2 className="w-6 h-6" />
                             </div>
@@ -128,7 +128,7 @@ export default function About({ stats }: AboutProps) {
             </section>
 
             {/* 3. Core Values */}
-            <section className="py-20 bg-zinc-50 dark:bg-zinc-900 border-y border-zinc-200/65 dark:border-zinc-850 transition-colors duration-300">
+            <section className="py-20 bg-zinc-50 dark:bg-zinc-900 transition-colors duration-300">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
                         <span className="text-orange-600 font-extrabold text-sm uppercase tracking-wider">Guidelines</span>
@@ -140,7 +140,7 @@ export default function About({ stats }: AboutProps) {
                         {coreValues.map((val, idx) => {
                             const IconComponent = val.icon;
                             return (
-                                <div key={idx} className="bg-white dark:bg-zinc-950 p-8 rounded-3xl border border-zinc-200/60 dark:border-zinc-850 space-y-4 shadow-sm">
+                                <div key={idx} className="bg-white dark:bg-zinc-950 p-8 rounded-3xl  space-y-4 shadow-sm">
                                     <div className="p-3.5 bg-orange-600 text-white rounded-2xl inline-block shadow-md shadow-orange-500/15">
                                         <IconComponent className="w-5 h-5" />
                                     </div>
@@ -164,7 +164,7 @@ export default function About({ stats }: AboutProps) {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
                         {team.map((member, idx) => (
-                            <div key={idx} className="bg-zinc-50 dark:bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-200/60 dark:border-zinc-850 flex flex-col items-center p-6 text-center space-y-4 group">
+                            <div key={idx} className="bg-zinc-50 dark:bg-zinc-900 rounded-3xl overflow-hidden  flex flex-col items-center p-6 text-center space-y-4 group">
                                 <div className="w-24 h-24 rounded-full overflow-hidden bg-zinc-200 border-4 border-white dark:border-zinc-800 shadow-md group-hover:scale-105 transition-transform duration-300">
                                     <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
                                 </div>

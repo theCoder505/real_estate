@@ -5,7 +5,7 @@ then complete the routes and controllers works for the workflows.
 create related pages in tsx and table will be there for already added data.
 there will be popup for crud operations and image can be preview there.
 
-Admin can set social links, footer data, brand name (reflects in .env file also) as Settings model & miigration. contact email, phone, location, logo, brand icon all these belongs to settings, and will be visible in the frontend in the footer or header. and brand name will be visible in the tab title also. Applogo is always upload as 'logo.png' under the 'public/assets/images/' folder. and the app icon as 'icon.png' under the 'public/assets/images/' folder. so if logo or icon changes then rename the file as this name. Set it in the app.blade.php as the brand icon as well please.
+Admin can set social links, footer data, brand name (reflects in .env file also) as Settings model & miigration. contact email, phone, location, logo, brand icon all these belongs to settings, and will be visible in the frontend in the footer or header. and brand name will be visible in the tab title also. Applogo is always upload as 'logo.png' under the 'public/assets/images/' folder. and the app icon as 'icon.png' under the 'public/assets/images/' folder. so if logo or icon changes then rename the file as this name. Set it in the app.blade.php as the brand icon as well please. Set google map iframe location as well in the settings.
 
 So:
 Property, blogs/news, about section data, facilitiess card data, featured properties, testimonials, about, terms, privacy every pages will be dynamic.

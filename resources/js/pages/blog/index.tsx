@@ -8,10 +8,10 @@ interface BlogPost {
     title: string;
     category: string;
     author: string;
-    date: string;
+    published_at: string;
     excerpt: string;
     content: string;
-    image: string;
+    image_path: string;
 }
 
 interface IndexProps {
@@ -25,8 +25,8 @@ export default function Index({ posts }: IndexProps) {
 
             {/* 1. Header Banner */}
             <section className="bg-zinc-900 text-white py-16 relative overflow-hidden">
-                <div className="absolute inset-0 bg-cover bg-center opacity-10" 
-                    style={{ backgroundImage: "url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80')" }} 
+                <div className="absolute inset-0 bg-cover bg-center opacity-10"
+                    style={{ backgroundImage: "url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80')" }}
                 />
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
                     <span className="text-orange-500 font-extrabold text-sm uppercase tracking-wider">News & Insights</span>
@@ -43,14 +43,14 @@ export default function Index({ posts }: IndexProps) {
                     {posts.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
                             {posts.map((post) => (
-                                <article 
-                                    key={post.id} 
-                                    className="bg-zinc-50 dark:bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-200/60 dark:border-zinc-850 shadow-sm hover:shadow-md hover:border-orange-500/20 dark:hover:border-orange-500/20 transition-all duration-300 group flex flex-col h-full"
+                                <article
+                                    key={post.id}
+                                    className="bg-zinc-50 dark:bg-zinc-900 rounded-3xl overflow-hidden  shadow-sm hover:shadow-md hover:border-orange-500/20 dark:hover:border-orange-500/20 transition-all duration-300 group flex flex-col h-full"
                                 >
                                     <div className="relative aspect-[16/9] overflow-hidden bg-zinc-150 shrink-0">
-                                        <img 
-                                            src={post.image} 
-                                            alt={post.title} 
+                                        <img
+                                            src={post.image_path}
+                                            alt={post.title}
                                             className="object-cover w-full h-full group-hover:scale-103 transition-transform duration-500"
                                             loading="lazy"
                                         />
@@ -64,7 +64,7 @@ export default function Index({ posts }: IndexProps) {
                                             <div className="text-xs text-zinc-400 font-bold flex gap-3">
                                                 <span>By {post.author}</span>
                                                 <span>•</span>
-                                                <span>{new Date(post.date).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'})}</span>
+                                                <span>{new Date(post.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                                             </div>
                                             <h3 className="font-extrabold text-lg sm:text-xl text-zinc-900 dark:text-white line-clamp-2 leading-tight group-hover:text-orange-600 transition-colors">
                                                 {post.title}
@@ -74,7 +74,7 @@ export default function Index({ posts }: IndexProps) {
                                             </p>
                                         </div>
 
-                                        <Link 
+                                        <Link
                                             href={route('blog.show', post.id)}
                                             className="inline-flex items-center gap-1 text-sm font-bold text-orange-600 hover:text-orange-700 dark:text-orange-500 dark:hover:text-orange-400 self-start transition-colors group/link"
                                         >

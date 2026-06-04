@@ -13,7 +13,7 @@ interface Property {
     beds: number;
     baths: number;
     sqft: number;
-    image: string;
+    image_path: string;
     featured: boolean;
     features: string[];
     status: string;
@@ -99,8 +99,8 @@ export default function Index({ properties, filters }: PropertiesProps) {
 
             {/* 1. Page Header */}
             <section className="bg-zinc-900 text-white py-16 relative overflow-hidden">
-                <div className="absolute inset-0 bg-cover bg-center opacity-10" 
-                    style={{ backgroundImage: "url('https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80')" }} 
+                <div className="absolute inset-0 bg-cover bg-center opacity-10"
+                    style={{ backgroundImage: "url('https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80')" }}
                 />
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
                     <span className="text-orange-500 font-extrabold text-sm uppercase tracking-wider">Our Portfolio</span>
@@ -115,14 +115,14 @@ export default function Index({ properties, filters }: PropertiesProps) {
             <section className="py-12 bg-white dark:bg-zinc-950 transition-colors duration-300">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
                     {/* Interactive Filter Panel */}
-                    <div className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-850 p-6 rounded-3xl shadow-sm">
+                    <div className="bg-zinc-50 dark:bg-zinc-900  p-6 rounded-3xl shadow-sm">
                         <form onSubmit={handleFilterSubmit} className="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
                             {/* Search bar */}
                             <div className="md:col-span-5 space-y-2">
                                 <label className="block text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Search Location / Title</label>
                                 <div className="relative">
-                                    <input 
-                                        type="text" 
+                                    <input
+                                        type="text"
                                         placeholder="e.g. Miami, Austin, flat..."
                                         value={search}
                                         onChange={(e) => setSearch(e.target.value)}
@@ -135,8 +135,8 @@ export default function Index({ properties, filters }: PropertiesProps) {
                             {/* Max Price */}
                             <div className="md:col-span-4 space-y-2">
                                 <label className="block text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Max Budget ($)</label>
-                                <input 
-                                    type="number" 
+                                <input
+                                    type="number"
                                     placeholder="e.g. 500000"
                                     value={priceMax}
                                     onChange={(e) => setPriceMax(e.target.value)}
@@ -146,14 +146,14 @@ export default function Index({ properties, filters }: PropertiesProps) {
 
                             {/* Action Buttons */}
                             <div className="md:col-span-3 flex gap-3">
-                                <button 
+                                <button
                                     type="submit"
                                     className="flex-grow py-3 bg-orange-600 hover:bg-orange-700 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-orange-500/10 flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer"
                                 >
                                     <SlidersHorizontal className="w-4 h-4" />
                                     <span>Filter</span>
                                 </button>
-                                <button 
+                                <button
                                     type="button"
                                     onClick={resetFilters}
                                     className="px-4 py-3 bg-zinc-200 hover:bg-zinc-300 text-zinc-700 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-zinc-300 rounded-xl transition-all flex items-center justify-center active:scale-95 cursor-pointer"
@@ -171,11 +171,10 @@ export default function Index({ properties, filters }: PropertiesProps) {
                                     key={tab.value}
                                     type="button"
                                     onClick={() => handleTypeChange(tab.value)}
-                                    className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border ${
-                                        type === tab.value
+                                    className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border ${type === tab.value
                                             ? 'bg-orange-600 border-orange-600 text-white shadow-sm'
                                             : 'bg-white border-zinc-200/80 text-zinc-650 dark:bg-zinc-950 dark:border-zinc-800 dark:text-zinc-350 hover:bg-zinc-100 dark:hover:bg-zinc-900'
-                                    }`}
+                                        }`}
                                 >
                                     {tab.label}
                                 </button>
@@ -187,14 +186,14 @@ export default function Index({ properties, filters }: PropertiesProps) {
                     {properties.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {properties.map((property) => (
-                                <article 
-                                    key={property.id} 
-                                    className="bg-white dark:bg-zinc-950 rounded-3xl overflow-hidden border border-zinc-200/60 dark:border-zinc-850 shadow-sm hover:shadow-md hover:border-orange-500/20 dark:hover:border-orange-500/20 transition-all duration-300 group"
+                                <article
+                                    key={property.id}
+                                    className="bg-white dark:bg-zinc-950 rounded-3xl overflow-hidden  shadow-sm hover:shadow-md hover:border-orange-500/20 dark:hover:border-orange-500/20 transition-all duration-300 group"
                                 >
                                     <div className="relative aspect-[16/10] overflow-hidden bg-zinc-100">
-                                        <img 
-                                            src={property.image} 
-                                            alt={property.title} 
+                                        <img
+                                            src={property.image_path}
+                                            alt={property.title}
                                             className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
                                             loading="lazy"
                                         />
@@ -245,7 +244,7 @@ export default function Index({ properties, filters }: PropertiesProps) {
                                             </div>
                                         )}
 
-                                        <Link 
+                                        <Link
                                             href={route('properties.show', property.id)}
                                             className="w-full py-3 bg-zinc-50 dark:bg-zinc-900 hover:bg-orange-600 hover:text-white dark:hover:bg-orange-600 text-zinc-900 dark:text-white text-center font-bold text-sm rounded-xl transition-all flex items-center justify-center gap-1 group/btn"
                                         >
@@ -263,7 +262,7 @@ export default function Index({ properties, filters }: PropertiesProps) {
                                 <h3 className="font-bold text-lg text-zinc-900 dark:text-white">No properties found</h3>
                                 <p className="text-sm text-zinc-500">Try adjusting your filters or keyword searches.</p>
                             </div>
-                            <button 
+                            <button
                                 onClick={resetFilters}
                                 className="px-4 py-2 bg-orange-600 text-white font-bold text-xs rounded-lg hover:bg-orange-700 transition-colors uppercase tracking-wider"
                             >

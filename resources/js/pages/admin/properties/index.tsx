@@ -1,0 +1,292 @@
+import React, { useState } from 'react';
+import { Head, useForm, router } from '@inertiajs/react';
+import AuthenticatedLayout from '@/layouts/authenticated-layout';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Plus, Pencil, Trash2, Home, Bath, BedDouble, Maximize2, Search, X } from 'lucide-react';
+import Swal from 'sweetalert2';
+
+interface Property {
+    id: number;
+    title: string;
+    type: string;
+    price: number;
+    location: string;
+    description: string;
+    beds: number;
+    baths: number;
+    sqft: number;
+    status: string;
+    featured: boolean;
+    features: string[];
+    image_path: string;
+}
+
+interface PropertiesIndexProps {
+    properties: Property[];
+}
+
+const STATUSES = ['For Sale', 'For Rent', 'Sold', 'Rented'];
+const TYPES = ['Apartment', 'Villa', 'Plot', 'Commercial', 'Duplex', 'Penthouse'];
+
+function PropertyForm({
+    initial,
+    onSuccess,
+    onCancel,
+    mode,
+}: {
+    initial?: Partial<Property>;
+    onSuccess: () => void;
+    onCancel: () => void;
+    mode: 'create' | 'edit';
+}) {
+    const { data, setData, post, processing, errors, reset } = useForm({
+        _method: mode === 'edit' ? 'PUT' : 'POST',
+        title: initial?.title || '',
+        type: initial?.type || TYPES[0],
+        price: initial?.price?.toString() || '',
+        location: initial?.location || '',
+        description: initial?.description || '',
+        beds: initial?.beds?.toString() || '1',
+        baths: initial?.baths?.toString() || '1',
+        sqft: initial?.sqft?.toString() || '',
+        status: initial?.status || STATUSES[0],
+        featured: initial?.featured ? '1' : '0',
+        features: initial?.features?.join(', ') || '',
+        image: null as File | null,
+    });
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        const url = mode === 'edit'
+            ? route('admin.properties.update', initial!.id)
+            : route('admin.properties.store');
+        post(url, {
+            preserveScroll: true,
+            onSuccess: () => {
+                Swal.fire({ icon: 'success', title: 'Done!', text: `Property ${mode === 'edit' ? 'updated' : 'created'} successfully.`, timer: 2500, showConfirmButton: false });
+                onSuccess();
+            },
+            onError: () => Swal.fire({ icon: 'error', title: 'Oops...', text: 'Please check the form for errors.' }),
+        });
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1 sm:col-span-2">
+                    <Label>Title</Label>
+                    <Input value={data.title} onChange={e => setData('title', e.target.value)} placeholder="Property title" />
+                    {errors.title && <p className="text-xs text-red-500">{errors.title}</p>}
+                </div>
+                <div className="space-y-1">
+                    <Label>Type</Label>
+                    <select value={data.type} onChange={e => setData('type', e.target.value)}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring">
+                        {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                    </select>
+                </div>
+                <div className="space-y-1">
+                    <Label>Status</Label>
+                    <select value={data.status} onChange={e => setData('status', e.target.value)}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring">
+                        {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                </div>
+                <div className="space-y-1">
+                    <Label>Price ($)</Label>
+                    <Input type="number" value={data.price} onChange={e => setData('price', e.target.value)} placeholder="450000" />
+                    {errors.price && <p className="text-xs text-red-500">{errors.price}</p>}
+                </div>
+                <div className="space-y-1">
+                    <Label>Location</Label>
+                    <Input value={data.location} onChange={e => setData('location', e.target.value)} placeholder="Downtown, NY" />
+                    {errors.location && <p className="text-xs text-red-500">{errors.location}</p>}
+                </div>
+                <div className="space-y-1">
+                    <Label>Beds</Label>
+                    <Input type="number" value={data.beds} onChange={e => setData('beds', e.target.value)} />
+                </div>
+                <div className="space-y-1">
+                    <Label>Baths</Label>
+                    <Input type="number" step="0.5" value={data.baths} onChange={e => setData('baths', e.target.value)} />
+                </div>
+                <div className="space-y-1">
+                    <Label>Area (sqft)</Label>
+                    <Input type="number" value={data.sqft} onChange={e => setData('sqft', e.target.value)} placeholder="1200" />
+                </div>
+                <div className="space-y-1">
+                    <Label>Featured</Label>
+                    <select value={data.featured} onChange={e => setData('featured', e.target.value)}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring">
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+                <div className="space-y-1 sm:col-span-2">
+                    <Label>Features (comma-separated)</Label>
+                    <Input value={data.features} onChange={e => setData('features', e.target.value)} placeholder="Pool, Gym, Parking" />
+                </div>
+                <div className="space-y-1 sm:col-span-2">
+                    <Label>Description</Label>
+                    <textarea rows={3} value={data.description} onChange={e => setData('description', e.target.value)}
+                        className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring resize-none"
+                        placeholder="Property description..." />
+                    {errors.description && <p className="text-xs text-red-500">{errors.description}</p>}
+                </div>
+                <div className="space-y-1 sm:col-span-2">
+                    <Label>Image</Label>
+                    {initial?.image_path && (
+                        <div className="mb-2 rounded-lg overflow-hidden h-32 w-full bg-zinc-100">
+                            <img src={`/${initial.image_path}`} alt="Current" className="h-full w-full object-cover" onError={e => (e.currentTarget.src = initial.image_path)} />
+                        </div>
+                    )}
+                    <Input type="file" accept="image/*" onChange={e => setData('image', e.target.files?.[0] || null)} />
+                    {mode === 'edit' && <p className="text-xs text-muted-foreground">Leave empty to keep existing image</p>}
+                </div>
+            </div>
+            <DialogFooter>
+                <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
+                <Button type="submit" disabled={processing}>{mode === 'edit' ? 'Update Property' : 'Create Property'}</Button>
+            </DialogFooter>
+        </form>
+    );
+}
+
+export default function PropertiesIndex({ properties }: PropertiesIndexProps) {
+    const [search, setSearch] = useState('');
+    const [createOpen, setCreateOpen] = useState(false);
+    const [editProperty, setEditProperty] = useState<Property | null>(null);
+
+    const filtered = properties.filter(p =>
+        p.title.toLowerCase().includes(search.toLowerCase()) ||
+        p.location.toLowerCase().includes(search.toLowerCase()) ||
+        p.type.toLowerCase().includes(search.toLowerCase())
+    );
+
+    const handleDelete = (property: Property) => {
+        Swal.fire({
+            title: 'Delete Property?',
+            text: `"${property.title}" will be permanently deleted.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Yes, delete it!',
+        }).then(result => {
+            if (result.isConfirmed) {
+                router.delete(route('admin.properties.destroy', property.id), {
+                    preserveScroll: true,
+                    onSuccess: () => Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Property removed.', timer: 2000, showConfirmButton: false }),
+                });
+            }
+        });
+    };
+
+    return (
+        <AuthenticatedLayout>
+            <Head title="Properties Management" />
+
+            <div className="space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h2 className="text-2xl font-bold tracking-tight">Properties</h2>
+                        <p className="text-muted-foreground">{properties.length} total properties</p>
+                    </div>
+                    <Button onClick={() => setCreateOpen(true)} className="gap-2">
+                        <Plus className="w-4 h-4" /> Add Property
+                    </Button>
+                </div>
+
+                <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                        placeholder="Search by title, location or type..."
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        className="pl-9"
+                    />
+                    {search && (
+                        <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                            <X className="w-4 h-4" />
+                        </button>
+                    )}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {filtered.map(property => (
+                        <Card key={property.id} className="overflow-hidden group">
+                            <div className="relative aspect-[16/10] bg-zinc-100 overflow-hidden">
+                                <img
+                                    src={property.image_path?.startsWith('http') ? property.image_path : `/${property.image_path}`}
+                                    alt={property.title}
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                    onError={e => { e.currentTarget.src = 'https://placehold.co/640x400?text=No+Image'; }}
+                                />
+                                <span className={`absolute top-2 left-2 text-xs font-bold px-2 py-1 rounded-lg text-white ${property.featured ? 'bg-orange-600' : 'bg-zinc-700'}`}>
+                                    {property.featured ? 'Featured' : property.type}
+                                </span>
+                                <span className="absolute top-2 right-2 text-xs font-bold px-2 py-1 rounded-lg bg-white/90 text-zinc-800">
+                                    {property.status}
+                                </span>
+                            </div>
+                            <CardContent className="p-4 space-y-3">
+                                <div>
+                                    <h3 className="font-bold text-sm line-clamp-1">{property.title}</h3>
+                                    <p className="text-xs text-muted-foreground">{property.location}</p>
+                                </div>
+                                <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                                    <span className="flex items-center gap-1"><BedDouble className="w-3.5 h-3.5" />{property.beds}</span>
+                                    <span className="flex items-center gap-1"><Bath className="w-3.5 h-3.5" />{property.baths}</span>
+                                    <span className="flex items-center gap-1"><Maximize2 className="w-3.5 h-3.5" />{property.sqft} sqft</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="font-extrabold text-orange-600">${Number(property.price).toLocaleString()}</span>
+                                    <div className="flex gap-2">
+                                        <Button size="sm" variant="outline" className="h-8 w-8 p-0" onClick={() => setEditProperty(property)}>
+                                            <Pencil className="w-3.5 h-3.5" />
+                                        </Button>
+                                        <Button size="sm" variant="destructive" className="h-8 w-8 p-0" onClick={() => handleDelete(property)}>
+                                            <Trash2 className="w-3.5 h-3.5" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+                    {filtered.length === 0 && (
+                        <div className="col-span-full text-center py-16 text-muted-foreground">
+                            <Home className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                            <p>No properties found.</p>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Create Dialog */}
+            <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle>Add New Property</DialogTitle>
+                    </DialogHeader>
+                    <PropertyForm mode="create" onSuccess={() => setCreateOpen(false)} onCancel={() => setCreateOpen(false)} />
+                </DialogContent>
+            </Dialog>
+
+            {/* Edit Dialog */}
+            <Dialog open={!!editProperty} onOpenChange={open => !open && setEditProperty(null)}>
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle>Edit Property</DialogTitle>
+                    </DialogHeader>
+                    {editProperty && (
+                        <PropertyForm mode="edit" initial={editProperty} onSuccess={() => setEditProperty(null)} onCancel={() => setEditProperty(null)} />
+                    )}
+                </DialogContent>
+            </Dialog>
+        </AuthenticatedLayout>
+    );
+}

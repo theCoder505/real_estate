@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Property extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'title',
+        'slug',
+        'type',
+        'description',
+        'price',
+        'location',
+        'beds',
+        'baths',
+        'sqft',
+        'image_path',
+        'featured',
+        'status',
+        'features',
+    ];
+
+    protected $casts = [
+        'featured' => 'boolean',
+        'features' => 'array',
+        'price' => 'decimal:2',
+        'baths' => 'decimal:1',
+    ];
+}

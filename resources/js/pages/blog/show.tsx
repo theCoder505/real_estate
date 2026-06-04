@@ -8,10 +8,10 @@ interface BlogPost {
     title: string;
     category: string;
     author: string;
-    date: string;
+    published_at: string;
     excerpt: string;
     content: string;
-    image: string;
+    image_path: string;
 }
 
 interface ShowProps {
@@ -57,14 +57,14 @@ export default function Show({ post, relatedPosts }: ShowProps) {
                                 </span>
                                 <span className="text-zinc-300">|</span>
                                 <span className="flex items-center gap-1.5">
-                                    <Calendar className="w-4.5 h-4.5 text-orange-500" />
-                                    <span>{new Date(post.date).toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'})}</span>
+                                    <Calendar className="w-5 h-5 text-orange-500" />
+                                    <span>{new Date(post.published_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
                                 </span>
                             </div>
 
                             {/* Banner Image */}
-                            <div className="aspect-[16/9] rounded-3xl overflow-hidden shadow-sm border border-zinc-200 dark:border-zinc-800 bg-zinc-100">
-                                <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
+                            <div className="relative aspect-[21/9] rounded-3xl overflow-hidden shadow-md border border-zinc-200 dark:border-zinc-800 bg-zinc-100">
+                                <img src={post.image_path} alt={post.title} className="w-full h-full object-cover" />
                             </div>
 
                             {/* Article Content */}
@@ -74,7 +74,7 @@ export default function Show({ post, relatedPosts }: ShowProps) {
 
                             {/* Back Navigation Button */}
                             <div className="pt-8 border-t border-zinc-150 dark:border-zinc-900">
-                                <Link 
+                                <Link
                                     href={route('blog.index')}
                                     className="inline-flex items-center gap-1.5 px-4 py-2 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-850 text-zinc-800 dark:text-zinc-250 font-bold text-sm rounded-xl transition-all"
                                 >
@@ -87,7 +87,7 @@ export default function Show({ post, relatedPosts }: ShowProps) {
                         {/* Right: Related Articles Sidebar */}
                         {relatedPosts.length > 0 && (
                             <div className="lg:col-span-4 space-y-6">
-                                <div className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-850 p-6 sm:p-8 rounded-3xl space-y-6">
+                                <div className="bg-zinc-50 dark:bg-zinc-900  p-6 sm:p-8 rounded-3xl space-y-6">
                                     <h3 className="font-extrabold text-zinc-900 dark:text-white text-lg relative after:content-[''] after:absolute after:bottom-[-6px] after:left-0 after:w-6 after:h-0.5 after:bg-orange-500 pb-2">
                                         Related Articles
                                     </h3>
@@ -95,13 +95,13 @@ export default function Show({ post, relatedPosts }: ShowProps) {
                                         {relatedPosts.map((related) => (
                                             <article key={related.id} className="group space-y-2.5">
                                                 <div className="aspect-[16/9] overflow-hidden rounded-2xl bg-zinc-100">
-                                                    <img src={related.image} alt={related.title} className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300" />
+                                                    <img src={related.image_path} alt={related.title} className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300" />
                                                 </div>
                                                 <div className="space-y-1">
                                                     <span className="text-[10px] bg-zinc-200 text-zinc-650 dark:bg-zinc-800 dark:text-zinc-300 px-2 py-0.5 rounded font-bold uppercase">
                                                         {related.category}
                                                     </span>
-                                                    <Link 
+                                                    <Link
                                                         href={route('blog.show', related.id)}
                                                         className="block font-bold text-zinc-900 dark:text-white text-sm line-clamp-2 hover:text-orange-600 dark:hover:text-orange-500 transition-colors leading-snug"
                                                     >
