@@ -1,0 +1,16 @@
+Properties:
+https://preview.colorlib.com/theme/hus/img/appertment/1.png
+https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80
+https://preview.colorlib.com/theme/hus/img/appertment/2.png
+https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80
+https://images.unsplash.com/photo-1536376072261-38c75010e6c9?auto=format&fit=crop&w=800&q=80
+https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80
+
+Blog Posts:
+https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80
+https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=800&q=80
+https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80
+
+Testimonials:
+https://preview.colorlib.com/theme/hus/img/testmonial/author.png
+https://preview.colorlib.com/theme/hus/img/testmonial/author2.png

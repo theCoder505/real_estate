@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, usePage, useForm } from '@inertiajs/react';
 import { SharedData } from '@/types';
 import { Toaster } from 'react-hot-toast';
 import FlashMessage from '@/components/flash-message';
-import { Menu, X, Phone, Mail, MapPin, Send, Building2, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { Menu, X, Phone, Mail, MapPin, Send, Building2, Facebook, Twitter, Instagram, Linkedin, Moon, Sun } from 'lucide-react';
 
 interface PublicLayoutProps {
     children: React.ReactNode;
@@ -11,7 +11,38 @@ interface PublicLayoutProps {
 
 export default function PublicLayout({ children }: PublicLayoutProps) {
     const { auth, name } = usePage<SharedData>().props;
+    const { url } = usePage();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const storedTheme = localStorage.getItem('theme');
+            if (storedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+                setTheme('dark');
+            } else if (storedTheme === 'light') {
+                document.documentElement.classList.remove('dark');
+                setTheme('light');
+            } else {
+                // Fallback to check if dark class is already present (e.g. from server render)
+                const isDark = document.documentElement.classList.contains('dark');
+                setTheme(isDark ? 'dark' : 'light');
+            }
+        }
+    }, []);
+
+    const toggleTheme = () => {
+        if (theme === 'light') {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+            setTheme('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+            setTheme('light');
+        }
+    };
 
     // Newsletter subscription form
     const { data, setData, post, processing, reset, errors } = useForm({
@@ -63,7 +94,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                                 key={link.label}
                                 href={link.href}
                                 className={`font-semibold text-sm transition-colors relative py-1 hover:text-orange-600 ${
-                                    usePage().url === new URL(link.href).pathname
+                                    url === new URL(link.href).pathname
                                         ? 'text-orange-600 after:content-[""] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-orange-600'
                                         : 'text-zinc-600 dark:text-zinc-300'
                                 }`}
@@ -73,8 +104,15 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                         ))}
                     </nav>
 
-                    {/* Desktop Contact CTA button */}
-                    <div className="hidden lg:block">
+                    {/* Desktop Contact CTA & Theme toggle */}
+                    <div className="hidden lg:flex items-center gap-4">
+                        <button
+                            onClick={toggleTheme}
+                            className="p-2 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors"
+                            aria-label="Toggle theme"
+                        >
+                            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                        </button>
                         <Link
                             href={route('contact')}
                             className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-bold text-white bg-zinc-900 hover:bg-zinc-800 dark:bg-orange-600 dark:hover:bg-orange-700 rounded-xl transition-all shadow-md active:scale-95"
@@ -84,46 +122,57 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                     </div>
 
                     {/* Mobile Menu Toggle Button */}
-                    <button
-                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                        className="lg:hidden p-2 rounded-lg text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-                        aria-label="Toggle menu"
-                    >
-                        {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-                    </button>
+                    <div className="flex items-center gap-2 lg:hidden">
+                        <button
+                            onClick={toggleTheme}
+                            className="p-2 rounded-lg text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                            aria-label="Toggle theme"
+                        >
+                            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                        </button>
+                        <button
+                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            className="p-2 rounded-lg text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                            aria-label="Toggle menu"
+                        >
+                            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                        </button>
+                    </div>
                 </div>
 
-                {/* Mobile Drawer (Absolute Slideout or block) */}
+                {/* Mobile Dropdown Menu */}
                 {mobileMenuOpen && (
-                    <div className="lg:hidden border-t border-zinc-200/50 dark:border-zinc-800/50 bg-white dark:bg-zinc-950 p-4 space-y-3 shadow-xl">
-                        <div className="flex flex-col gap-2">
-                            {navLinks.map((link) => (
+                    <div className="absolute top-full left-0 right-0 w-full bg-white dark:bg-zinc-950/95 border-b border-zinc-200/50 dark:border-zinc-850/50 shadow-xl flex flex-col lg:hidden h-[calc(100vh-80px)] overflow-y-auto">
+                        <div className="p-4 space-y-3">
+                            <div className="flex flex-col gap-2">
+                                {navLinks.map((link) => (
+                                    <Link
+                                        key={link.label}
+                                        href={link.href}
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className={`block px-4 py-3 rounded-lg text-lg font-bold transition-all ${
+                                            url === new URL(link.href).pathname
+                                                ? 'bg-orange-50 dark:bg-orange-950/30 text-orange-600'
+                                                : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900'
+                                        }`}
+                                    >
+                                        {link.label}
+                                    </Link>
+                                ))}
+                            </div>
+                            <div className="pt-6 border-t border-zinc-100 dark:border-zinc-900 flex flex-col gap-4 mt-4">
+                                <span className="flex items-center gap-2 text-sm text-zinc-500 px-4">
+                                    <Phone className="w-5 h-5 text-orange-500" />
+                                    <span>+001 325 589</span>
+                                </span>
                                 <Link
-                                    key={link.label}
-                                    href={link.href}
+                                    href={route('contact')}
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className={`block px-4 py-2.5 rounded-lg text-sm font-bold transition-all ${
-                                        usePage().url === new URL(link.href).pathname
-                                            ? 'bg-orange-50 dark:bg-orange-950/30 text-orange-600'
-                                            : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900'
-                                    }`}
+                                    className="w-full inline-flex items-center justify-center py-4 text-sm font-bold text-white bg-orange-600 hover:bg-orange-700 rounded-xl transition-all"
                                 >
-                                    {link.label}
+                                    Get A Quote
                                 </Link>
-                            ))}
-                        </div>
-                        <div className="pt-4 border-t border-zinc-100 dark:border-zinc-900 flex flex-col gap-3">
-                            <span className="flex items-center gap-2 text-xs text-zinc-500 px-4">
-                                <Phone className="w-4 h-4 text-orange-500" />
-                                <span>+001 325 589</span>
-                            </span>
-                            <Link
-                                href={route('contact')}
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="w-full inline-flex items-center justify-center py-2.5 text-sm font-bold text-white bg-orange-600 hover:bg-orange-700 rounded-lg transition-all"
-                            >
-                                Get A Quote
-                            </Link>
+                            </div>
                         </div>
                     </div>
                 )}

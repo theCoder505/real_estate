@@ -21,7 +21,7 @@ class PublicPageController extends Controller
                 'beds' => 2,
                 'baths' => 2,
                 'sqft' => 920,
-                'image' => 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80',
+                'image' => 'https://preview.colorlib.com/theme/hus/img/appertment/1.png',
                 'featured' => true,
                 'features' => ['Central Heating', '24/7 Security', 'Gym Access', 'High-speed Wi-Fi', 'Dishwasher', 'Balcony'],
                 'status' => 'For Sale'
@@ -36,7 +36,7 @@ class PublicPageController extends Controller
                 'beds' => 4,
                 'baths' => 4.5,
                 'sqft' => 3450,
-                'image' => 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80',
+                'image' => 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80',
                 'featured' => true,
                 'features' => ['Private Pool', 'Ocean View', 'Wraparound Terrace', 'Concierge Service', 'Private Elevator', 'Smart Home System', 'Wine Cellar'],
                 'status' => 'For Sale'
@@ -51,7 +51,7 @@ class PublicPageController extends Controller
                 'beds' => 3,
                 'baths' => 2,
                 'sqft' => 1450,
-                'image' => 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80',
+                'image' => 'https://preview.colorlib.com/theme/hus/img/appertment/2.png',
                 'featured' => true,
                 'features' => ['Kid-Friendly Park', 'Garage Parking', 'Hardwood Floors', 'Walk-in Closet', 'Storage Room', 'Central AC'],
                 'status' => 'For Sale'

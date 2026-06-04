@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import PublicLayout from '@/layouts/public-layout';
-import { Search, MapPin, BedDouble, Bath, Square, ArrowRight, Phone, MessageSquare, Quote, Heart, Award, ShieldCheck, Zap } from 'lucide-react';
+import { Search, MapPin, BedDouble, Bath, Square, ArrowRight, Phone, MessageSquare, Quote, Heart, Award, ShieldCheck, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
+import useEmblaCarousel from 'embla-carousel-react';
+import Autoplay from 'embla-carousel-autoplay';
 
 interface Property {
     id: number;
@@ -43,6 +45,16 @@ interface HomeProps {
 export default function Home({ featuredProperties, latestNews, stats }: HomeProps) {
     const [searchQuery, setSearchQuery] = useState('');
     const [propertyType, setPropertyType] = useState('all');
+    
+    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' }, [Autoplay({ delay: 5000, stopOnInteraction: true })]);
+
+    const scrollPrev = useCallback(() => {
+        if (emblaApi) emblaApi.scrollPrev();
+    }, [emblaApi]);
+
+    const scrollNext = useCallback(() => {
+        if (emblaApi) emblaApi.scrollNext();
+    }, [emblaApi]);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -268,98 +280,78 @@ export default function Home({ featuredProperties, latestNews, stats }: HomeProp
                 </div>
             </section>
 
-            {/* 4. Featured Listings Grid */}
-            <section className="py-20 bg-zinc-50 dark:bg-zinc-900 transition-colors duration-300">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
-                        <div className="space-y-3">
-                            <span className="text-orange-600 font-extrabold text-sm uppercase tracking-wider">Handpicked For You</span>
-                            <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white">Featured Properties</h2>
+            {/* 4. Featured Listings Slider */}
+            <section className="pt-40 pb-10 bg-white dark:bg-zinc-950 transition-colors duration-300">
+                <div className="">
+                    
+                    <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
+                        <span className="text-orange-600 font-extrabold text-sm uppercase tracking-wider">Handpicked For You</span>
+                        <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white">Featured Properties</h2>
+                        <p className="text-zinc-500 text-sm sm:text-base">
+                            Discover our curated selection of premium properties, ready for you to call home.
+                        </p>
+                    </div>
+                    <div className="relative group/slider">
+                        <div className="overflow-hidden" ref={emblaRef}>
+                            <div className="flex -ml-[2px] gap-4 lg:gap-6">
+                                {featuredProperties.map((property) => (
+                                <div key={property.id} className="flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.333333%] min-w-0 pl-[2px]">
+                                    <article className="relative aspect-[4/3] group overflow-hidden cursor-pointer">
+                                        <img 
+                                            src={property.image} 
+                                            alt={property.title} 
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100" 
+                                            loading="lazy"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none" />
+                                        
+                                        <div className="absolute bottom-0 left-0 w-full p-8 text-left pointer-events-none">
+                                            <h3 className="text-white text-2xl font-bold mb-2">${property.price.toLocaleString()}</h3>
+                                            <p className="text-zinc-200 font-semibold text-sm uppercase tracking-widest mb-4 line-clamp-1">
+                                                {property.title}
+                                            </p>
+                                            
+                                            {property.type !== 'plot' ? (
+                                                <div className="flex items-center text-zinc-300 text-xs font-medium space-x-3 uppercase tracking-wider">
+                                                    <span>{property.beds}BD</span>
+                                                    <span className="w-[1px] h-3 bg-zinc-500"></span>
+                                                    <span>{property.baths}BA</span>
+                                                    <span className="w-[1px] h-3 bg-zinc-500"></span>
+                                                    <span>{property.sqft} SF</span>
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center text-zinc-300 text-xs font-medium space-x-3 uppercase tracking-wider">
+                                                    <span>PLOT</span>
+                                                    <span className="w-[1px] h-3 bg-zinc-500"></span>
+                                                    <span>{property.sqft} SF</span>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <Link href={route('properties.show', property.id)} className="absolute inset-0 z-10">
+                                            <span className="sr-only">View Details</span>
+                                        </Link>
+                                    </article>
+                                </div>
+                            ))}
                         </div>
-                        <Link 
-                            href={route('properties.index')} 
-                            className="px-5 py-2.5 bg-white hover:bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-white font-bold text-sm rounded-xl border border-zinc-200 dark:border-zinc-700 transition-all inline-flex items-center gap-2 self-start sm:self-auto"
-                        >
-                            <span>Browse All Listings</span>
-                            <ArrowRight className="w-4 h-4" />
-                        </Link>
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {featuredProperties.map((property) => (
-                            <article 
-                                key={property.id} 
-                                className="bg-white dark:bg-zinc-950 rounded-3xl overflow-hidden border border-zinc-200/60 dark:border-zinc-850 shadow-sm hover:shadow-md hover:border-orange-500/20 dark:hover:border-orange-500/20 transition-all duration-300 group"
-                            >
-                                <div className="relative aspect-[16/10] overflow-hidden bg-zinc-100">
-                                    <img 
-                                        src={property.image} 
-                                        alt={property.title} 
-                                        className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
-                                        loading="lazy"
-                                    />
-                                    {/* Status Badge */}
-                                    <span className="absolute top-4 left-4 bg-orange-600 text-white text-xs font-extrabold px-3 py-1.5 rounded-lg uppercase tracking-wider shadow">
-                                        {property.status}
-                                    </span>
-                                    {/* Property Type Badge */}
-                                    <span className="absolute top-4 right-4 bg-zinc-900/80 backdrop-blur-sm text-zinc-100 text-xs font-bold px-3 py-1.5 rounded-lg uppercase tracking-wide">
-                                        {property.type}
-                                    </span>
-                                    {/* Price tag Overlay */}
-                                    <div className="absolute bottom-4 left-4 bg-zinc-900/90 backdrop-blur-sm text-orange-400 font-extrabold text-lg px-4 py-1.5 rounded-xl">
-                                        ${property.price.toLocaleString()}
-                                    </div>
-                                </div>
-
-                                <div className="p-6 space-y-4">
-                                    <div className="space-y-1.5">
-                                        <h3 className="font-extrabold text-xl text-zinc-900 dark:text-white line-clamp-1 group-hover:text-orange-600 transition-colors">
-                                            {property.title}
-                                        </h3>
-                                        <p className="flex items-center gap-1.5 text-sm text-zinc-500 dark:text-zinc-400">
-                                            <MapPin className="w-4 h-4 text-orange-500 shrink-0" />
-                                            <span className="line-clamp-1">{property.location}</span>
-                                        </p>
-                                    </div>
-
-                                    {/* Spec Indicators (only display if not Plot) */}
-                                    {property.type !== 'plot' ? (
-                                        <div className="flex justify-between items-center py-3 border-y border-zinc-100 dark:border-zinc-900 text-sm text-zinc-600 dark:text-zinc-400 font-semibold">
-                                            <span className="flex items-center gap-1.5">
-                                                <BedDouble className="w-4 h-4 text-orange-500" />
-                                                <span>{property.beds} Bed</span>
-                                            </span>
-                                            <span className="flex items-center gap-1.5">
-                                                <Bath className="w-4 h-4 text-orange-500" />
-                                                <span>{property.baths} Bath</span>
-                                            </span>
-                                            <span className="flex items-center gap-1.5">
-                                                <Square className="w-4 h-4 text-orange-500" />
-                                                <span>{property.sqft} sqft</span>
-                                            </span>
-                                        </div>
-                                    ) : (
-                                        <div className="py-3 border-y border-zinc-100 dark:border-zinc-900 text-sm text-zinc-600 dark:text-zinc-400 font-semibold flex items-center justify-between">
-                                            <span className="flex items-center gap-1.5">
-                                                <Square className="w-4 h-4 text-orange-500" />
-                                                <span>Plot Size: {property.sqft} sqft</span>
-                                            </span>
-                                            <span className="text-xs px-2.5 py-1 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 rounded-lg">Utilities Ready</span>
-                                        </div>
-                                    )}
-
-                                    <Link 
-                                        href={route('properties.show', property.id)}
-                                        className="w-full py-3 bg-zinc-50 dark:bg-zinc-900 hover:bg-orange-600 hover:text-white dark:hover:bg-orange-600 text-zinc-900 dark:text-white text-center font-bold text-sm rounded-xl transition-all flex items-center justify-center gap-1 group/btn"
-                                    >
-                                        <span>View Details</span>
-                                        <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                                    </Link>
-                                </div>
-                            </article>
-                        ))}
-                    </div>
+                    
+                    <button 
+                        onClick={scrollPrev}
+                        className="absolute top-1/2 -translate-y-1/2 left-4 md:left-8 w-12 h-12 bg-white/80 hover:bg-white text-zinc-900 rounded-full flex items-center justify-center shadow-xl opacity-0 group-hover/slider:opacity-100 transition-all duration-300 z-10 backdrop-blur-sm focus:outline-none"
+                        aria-label="Previous slide"
+                    >
+                        <ChevronLeft className="w-6 h-6" />
+                    </button>
+                    <button 
+                        onClick={scrollNext}
+                        className="absolute top-1/2 -translate-y-1/2 right-4 md:right-8 w-12 h-12 bg-white/80 hover:bg-white text-zinc-900 rounded-full flex items-center justify-center shadow-xl opacity-0 group-hover/slider:opacity-100 transition-all duration-300 z-10 backdrop-blur-sm focus:outline-none"
+                        aria-label="Next slide"
+                    >
+                        <ChevronRight className="w-6 h-6" />
+                    </button>
+                </div>
                 </div>
             </section>
 

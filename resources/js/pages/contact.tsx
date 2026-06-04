@@ -40,7 +40,16 @@ export default function Contact() {
                 </div>
             </section>
 
-            {/* 2. Contact Coordinates & Form */}
+            
+            {/* 2. Map Placeholder */}
+            <section className="bg-zinc-100 dark:bg-zinc-900 border-t border-zinc-200/50 dark:border-zinc-850 h-[600px] w-full relative transition-colors">
+                <iframe 
+                    className="w-full h-full grayscale dark:grayscale-0 dark:invert-0 opacity-100" 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d9739.626181446683!2d90.25991358451508!3d23.881189899665845!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755e998af65bee5%3A0x51e41cefc20b8fa8!2sJahangirnagar%20University%2C%20Savar!5e0!3m2!1sen!2sbd!4v1780572695912!5m2!1sen!2sbd" 
+                    loading="lazy"></iframe>
+            </section>
+
+            {/* 3. Contact Coordinates & Form */}
             <section className="py-20 bg-white dark:bg-zinc-950 transition-colors duration-300">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
@@ -159,18 +168,6 @@ export default function Contact() {
                         </div>
                     </div>
                 </div>
-            </section>
-
-            {/* 3. Map Placeholder */}
-            <section className="bg-zinc-100 dark:bg-zinc-900 border-t border-zinc-200/50 dark:border-zinc-850 h-96 w-full relative transition-colors">
-                {/* Styled elegant map embed simulation (fully responsive) */}
-                <iframe 
-                    title="Venture Builders Location"
-                    className="w-full h-full grayscale invert dark:invert-0 opacity-80"
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m13!1d3022.4282500000003!2d-73.9875!3d40.7484!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDQ0JzU0LjIiTiA3M8KwNTknMTUuMCJX!5e0!3m2!1sen!2sus!4v1234567890123" 
-                    allowFullScreen={false} 
-                    loading="lazy"
-                />
             </section>
         </PublicLayout>
     );
