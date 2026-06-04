@@ -1,0 +1,14 @@
+This is a laravel 12, react (shadcn/ui), tailwind css, inertia setup over typescript.
+In the real-estate folder in the root directory, i have there one httml file and one demo file where is a link.
+
+Now make me the public panel of the website, it will be a real estate company portfolio website.
+It will follow the design pattern in the html file in the real-estate folder and will also conjugate with the link in the demo.txt file.
+
+make a great design UI, add react hot toaster alert in a common FlasMesssage component.
+
+Setup the frontend (means the main real estate portfolio website. where will be home, blog, apartments/flats/plots, contact, privacy, terms, about and all other related pages)
+
+So complete the frontend public part (surface website) of the real estate website please.
+i want the website will run by composer run dev which is already running on as well. Sso not by npm run dev, oonly by composer run dev please.
+
+Do the requests now please.
