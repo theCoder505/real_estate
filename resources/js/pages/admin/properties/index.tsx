@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Head, useForm, router } from '@inertiajs/react';
-import AuthenticatedLayout from '@/layouts/authenticated-layout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Plus, Pencil, Trash2, Home, Bath, BedDouble, Maximize2, Search, X } from 'lucide-react';
+import { Plus, Pencil, Trash2, Home, Bath, BedDouble, Maximize2, Search, X, ImageIcon } from 'lucide-react';
 import Swal from 'sweetalert2';
+import AuthenticatedLayout from '@/layouts/authenticated-layout';
 
 interface Property {
     id: number;
@@ -43,7 +43,10 @@ function PropertyForm({
     onCancel: () => void;
     mode: 'create' | 'edit';
 }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
+    // Local state for the new image preview URL
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+    const { data, setData, post, processing, errors, transform } = useForm({
         _method: mode === 'edit' ? 'PUT' : 'POST',
         title: initial?.title || '',
         type: initial?.type || TYPES[0],
@@ -59,15 +62,61 @@ function PropertyForm({
         image: null as File | null,
     });
 
+    transform((data) => ({
+        ...data,
+        features: data.features
+            ? data.features.split(',').map((f: string) => f.trim()).filter(Boolean)
+            : [],
+    }));
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0] || null;
+        setData('image', file);
+
+        // Revoke previous object URL to avoid memory leaks
+        if (imagePreview) URL.revokeObjectURL(imagePreview);
+
+        if (file) {
+            setImagePreview(URL.createObjectURL(file));
+        } else {
+            setImagePreview(null);
+        }
+    };
+
+    const handleRemoveNewImage = () => {
+        if (imagePreview) URL.revokeObjectURL(imagePreview);
+        setImagePreview(null);
+        setData('image', null);
+        // Reset the file input
+        const fileInput = document.getElementById('property-image-input') as HTMLInputElement;
+        if (fileInput) fileInput.value = '';
+    };
+
+    // Determine what to show in the preview area:
+    // 1. Newly selected file preview takes priority
+    // 2. Existing image_path from DB (edit mode)
+    // 3. Nothing (create mode, no file picked)
+    const existingImageSrc = initial?.image_path
+        ? (initial.image_path.startsWith('http') ? initial.image_path : `/${initial.image_path}`)
+        : null;
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const url = mode === 'edit'
             ? route('admin.properties.update', initial!.id)
             : route('admin.properties.store');
+
         post(url, {
+            forceFormData: true,
             preserveScroll: true,
             onSuccess: () => {
-                Swal.fire({ icon: 'success', title: 'Done!', text: `Property ${mode === 'edit' ? 'updated' : 'created'} successfully.`, timer: 2500, showConfirmButton: false });
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Done!',
+                    text: `Property ${mode === 'edit' ? 'updated' : 'created'} successfully.`,
+                    timer: 2500,
+                    showConfirmButton: false,
+                });
                 onSuccess();
             },
             onError: () => Swal.fire({ icon: 'error', title: 'Oops...', text: 'Please check the form for errors.' }),
@@ -129,28 +178,78 @@ function PropertyForm({
                 <div className="space-y-1 sm:col-span-2">
                     <Label>Features (comma-separated)</Label>
                     <Input value={data.features} onChange={e => setData('features', e.target.value)} placeholder="Pool, Gym, Parking" />
+                    {errors.features && <p className="text-xs text-red-500">{errors.features}</p>}
                 </div>
                 <div className="space-y-1 sm:col-span-2">
                     <Label>Description</Label>
-                    <textarea rows={3} value={data.description} onChange={e => setData('description', e.target.value)}
+                    <textarea
+                        rows={3}
+                        value={data.description}
+                        onChange={e => setData('description', e.target.value)}
                         className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring resize-none"
-                        placeholder="Property description..." />
+                        placeholder="Property description..."
+                    />
                     {errors.description && <p className="text-xs text-red-500">{errors.description}</p>}
                 </div>
-                <div className="space-y-1 sm:col-span-2">
+
+                {/* ── Image Upload with Preview ── */}
+                <div className="space-y-2 sm:col-span-2">
                     <Label>Image</Label>
-                    {initial?.image_path && (
-                        <div className="mb-2 rounded-lg overflow-hidden h-32 w-full bg-zinc-100">
-                            <img src={`/${initial.image_path}`} alt="Current" className="h-full w-full object-cover" onError={e => (e.currentTarget.src = initial.image_path)} />
+
+                    {/* Preview area */}
+                    {(imagePreview || existingImageSrc) ? (
+                        <div className="relative rounded-lg overflow-hidden bg-zinc-100 border border-border">
+                            <img
+                                src={imagePreview ?? existingImageSrc!}
+                                alt="Preview"
+                                className="w-full h-48 object-cover"
+                                onError={e => { e.currentTarget.src = 'https://placehold.co/640x200?text=Invalid+Image'; }}
+                            />
+                            {/* Badge: shows which image is displayed */}
+                            <span className={`absolute top-2 left-2 text-xs font-semibold px-2 py-0.5 rounded-full text-white ${imagePreview ? 'bg-orange-500' : 'bg-zinc-600'}`}>
+                                {imagePreview ? 'New image' : 'Current image'}
+                            </span>
+                            {/* Remove new image button — only show when a new file is picked */}
+                            {imagePreview && (
+                                <button
+                                    type="button"
+                                    onClick={handleRemoveNewImage}
+                                    className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-1 transition-colors"
+                                    title="Remove selected image"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            )}
+                        </div>
+                    ) : (
+                        /* Empty state placeholder when no image at all */
+                        <div className="flex flex-col items-center justify-center h-48 rounded-lg border-2 border-dashed border-border bg-muted/30 text-muted-foreground gap-2">
+                            <ImageIcon className="w-10 h-10 opacity-30" />
+                            <p className="text-sm">No image selected</p>
                         </div>
                     )}
-                    <Input type="file" accept="image/*" onChange={e => setData('image', e.target.files?.[0] || null)} />
-                    {mode === 'edit' && <p className="text-xs text-muted-foreground">Leave empty to keep existing image</p>}
+
+                    <Input
+                        id="property-image-input"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                    />
+                    {errors.image && <p className="text-xs text-red-500">{errors.image}</p>}
+                    {mode === 'edit' && !imagePreview && (
+                        <p className="text-xs text-muted-foreground">Leave empty to keep the existing image.</p>
+                    )}
+                    {imagePreview && (
+                        <p className="text-xs text-orange-500">New image selected — this will replace the current one on save.</p>
+                    )}
                 </div>
             </div>
+
             <DialogFooter>
                 <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
-                <Button type="submit" disabled={processing}>{mode === 'edit' ? 'Update Property' : 'Create Property'}</Button>
+                <Button type="submit" disabled={processing}>
+                    {mode === 'edit' ? 'Update Property' : 'Create Property'}
+                </Button>
             </DialogFooter>
         </form>
     );
@@ -221,7 +320,7 @@ export default function PropertiesIndex({ properties }: PropertiesIndexProps) {
                         <Card key={property.id} className="overflow-hidden group">
                             <div className="relative aspect-[16/10] bg-zinc-100 overflow-hidden">
                                 <img
-                                    src={property.image_path?.startsWith('http') ? property.image_path : `/${property.image_path}`}
+                                    src={property.image_path?.startsWith('http') ? property.image_path : `${property.image_path}`}
                                     alt={property.title}
                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                     onError={e => { e.currentTarget.src = 'https://placehold.co/640x400?text=No+Image'; }}

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Reply from Venture Builders</title>
+    <title>Reply from {{ config('app.name') }}</title>
 </head>
 <body style="font-family: sans-serif; line-height: 1.6; color: #333;">
     <h2>Hello {{ $contactMessage->name }},</h2>
@@ -15,6 +15,6 @@
     <p>{!! nl2br(e($replyMessage)) !!}</p>
 
     <br>
-    <p>Best regards,<br>The Venture Builders Team</p>
+    <p>Best regards,<br>The {{ config('app.name') }} Team</p>
 </body>
 </html>

@@ -1,11 +1,18 @@
 <?php
 
+use App\Http\Controllers\Admin\BlogPostController;
+use App\Http\Controllers\Admin\ContactMessageController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\FacilityController;
+use App\Http\Controllers\Admin\PropertyController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\TestimonialController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
-
 use App\Http\Controllers\PublicPageController;
-
 use App\Http\Controllers\ContactController;
+use App\Http\Middleware\VerifyContactOtp;
+use Illuminate\Support\Facades\Artisan;
+
 
 Route::get('/', [PublicPageController::class, 'home'])->name('home');
 Route::get('/about', [PublicPageController::class, 'about'])->name('about');
@@ -16,31 +23,38 @@ Route::get('/blog', [PublicPageController::class, 'blog'])->name('blog.index');
 Route::get('/blog/{id}', [PublicPageController::class, 'blogShow'])->name('blog.show');
 Route::get('/contact', [PublicPageController::class, 'contact'])->name('contact');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
-Route::post('/contact/verify', [ContactController::class, 'verifyOtp'])->middleware(\App\Http\Middleware\VerifyContactOtp::class)->name('contact.verify');
+Route::post('/contact/verify', [ContactController::class, 'verifyOtp'])->middleware(VerifyContactOtp::class)->name('contact.verify');
 Route::post('/subscribe', [PublicPageController::class, 'subscribe'])->name('subscribe');
 Route::get('/privacy', [PublicPageController::class, 'privacy'])->name('privacy');
 Route::get('/terms', [PublicPageController::class, 'terms'])->name('terms');
 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Settings
-    Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'edit'])->name('settings.edit');
-    Route::put('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
-    Route::post('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update']); // fallback for multipart/form-data method spoofing
+    Route::get('/settings', [SettingController::class, 'edit'])->name('settings.edit');
+    Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
+    Route::post('/settings', [SettingController::class, 'update']);
 
-    // Resources
-    Route::resource('properties', \App\Http\Controllers\Admin\PropertyController::class)->except(['create', 'show', 'edit']);
-    Route::resource('blog', \App\Http\Controllers\Admin\BlogPostController::class)->except(['create', 'show', 'edit']);
-    Route::resource('facilities', \App\Http\Controllers\Admin\FacilityController::class)->except(['create', 'show', 'edit']);
-    Route::resource('testimonials', \App\Http\Controllers\Admin\TestimonialController::class)->except(['create', 'show', 'edit']);
+    Route::resource('properties', PropertyController::class)->except(['create', 'show', 'edit']);
+    Route::resource('blog', BlogPostController::class)->except(['create', 'show', 'edit']);
+    Route::resource('facilities', FacilityController::class)->except(['create', 'show', 'edit']);
+    Route::resource('testimonials', TestimonialController::class)->except(['create', 'show', 'edit']);
     
-    // Contact Messages
-    Route::get('contact-messages', [\App\Http\Controllers\Admin\ContactMessageController::class, 'index'])->name('contact.index');
-    Route::post('contact-messages/{contactMessage}/reply', [\App\Http\Controllers\Admin\ContactMessageController::class, 'reply'])->name('contact.reply');
-    Route::delete('contact-messages/{contactMessage}', [\App\Http\Controllers\Admin\ContactMessageController::class, 'destroy'])->name('contact.destroy');
+    Route::get('contact-messages', [ContactMessageController::class, 'index'])->name('contact.index');
+    Route::post('contact-messages/{contactMessage}/reply', [ContactMessageController::class, 'reply'])->name('contact.reply');
+    Route::delete('contact-messages/{contactMessage}', [ContactMessageController::class, 'destroy'])->name('contact.destroy');
+});
+
+
+
+Route::get('/clear', function () {
+    Artisan::call('cache:clear');
+    Artisan::call('config:clear');
+    Artisan::call('config:cache');
+    Artisan::call('view:clear');
+    Artisan::call('route:clear');
+    Artisan::call('storage:link');
+    return "Cleared!";
 });
 
 require __DIR__.'/settings.php';

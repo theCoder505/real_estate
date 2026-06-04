@@ -17,11 +17,13 @@ class PublicPageController extends Controller
         $featuredProperties = Property::where('featured', true)->get();
         $latestNews = BlogPost::orderBy('published_at', 'desc')->take(2)->get();
         $testimonials = Testimonial::all();
+        $settings = Setting::first();
 
         return Inertia::render('home', [
             'featuredProperties' => $featuredProperties,
             'latestNews' => $latestNews,
             'testimonials' => $testimonials,
+            'settings' => $settings,
             'stats' => [
                 'experience' => 10,
                 'buildings' => 120,
@@ -45,7 +47,6 @@ class PublicPageController extends Controller
     public function facilities()
     {
         $facilitiesList = Facility::all();
-
         return Inertia::render('facilities', [
             'facilities' => $facilitiesList
         ]);

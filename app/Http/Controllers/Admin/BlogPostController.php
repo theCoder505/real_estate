@@ -8,6 +8,7 @@ use App\Models\BlogPost;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 
 class BlogPostController extends Controller
 {
@@ -28,65 +29,67 @@ class BlogPostController extends Controller
             'excerpt' => 'required|string',
             'content' => 'required|string',
             'published_at' => 'nullable|date',
-            'image' => 'nullable|image|max:2048'
+            'image' => 'nullable|image|max:10240'
         ]);
-
         $validated['slug'] = Str::slug($validated['title']);
-
         if ($request->hasFile('image')) {
             $file = $request->file('image');
-            $filename = 'blog_' . time() . '.' . $file->getClientOriginalExtension();
+            $filename = 'blog_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('assets/images'), $filename);
-            $validated['image_path'] = 'assets/images/' . $filename;
+            $validated['image_path'] = '/assets/images/' . $filename;
         }
-
         BlogPost::create($validated);
-
-        return redirect()->back()->with('success', 'Blog post created successfully.');
+        return redirect()->route('admin.blog.index')->with('success', 'Blog post created successfully.');
     }
 
     public function update(Request $request, BlogPost $blogPost)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
-            'author' => 'required|string|max:255',
-            'excerpt' => 'required|string',
-            'content' => 'required|string',
-            'published_at' => 'nullable|date',
-            'image' => 'nullable|image|max:2048'
-        ]);
+        try {
+            $validated = $request->validate([
+                'title' => 'required|string|max:255',
+                'category' => 'required|string|max:255',
+                'author' => 'required|string|max:255',
+                'excerpt' => 'required|string',
+                'content' => 'required|string',
+                'published_at' => 'nullable|date',
+                'image' => 'nullable|image|max:10240'
+            ]);
 
-        $validated['slug'] = Str::slug($validated['title']);
+            $validated['slug'] = Str::slug($validated['title']);
 
-        if ($request->hasFile('image')) {
-            if ($blogPost->image_path && !str_starts_with($blogPost->image_path, 'http')) {
-                if (File::exists(public_path($blogPost->image_path))) {
-                    File::delete(public_path($blogPost->image_path));
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                // Delete old image if exists and is local
+                if ($blogPost->image_path && !str_contains($blogPost->image_path, 'http')) {
+                    $oldImagePath = public_path($blogPost->image_path);
+                    if (File::exists($oldImagePath)) {
+                        File::delete($oldImagePath);
+                    }
                 }
+
+                // Upload new image
+                $file = $request->file('image');
+                $filename = 'blog_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('assets/images'), $filename);
+                $validated['image_path'] = '/assets/images/' . $filename;
             }
 
-            $file = $request->file('image');
-            $filename = 'blog_' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('assets/images'), $filename);
-            $validated['image_path'] = 'assets/images/' . $filename;
+            $blogPost->update($validated);
+            return redirect()->route('admin.blog.index')->with('success', 'Blog post updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Failed to update blog post: ' . $e->getMessage()]);
         }
-
-        $blogPost->update($validated);
-
-        return redirect()->back()->with('success', 'Blog post updated successfully.');
     }
 
     public function destroy(BlogPost $blogPost)
     {
-        if ($blogPost->image_path && !str_starts_with($blogPost->image_path, 'http')) {
-            if (File::exists(public_path($blogPost->image_path))) {
-                File::delete(public_path($blogPost->image_path));
+        if ($blogPost->image_path && !str_contains($blogPost->image_path, 'http')) {
+            $imagePath = public_path($blogPost->image_path);
+            if (File::exists($imagePath)) {
+                File::delete($imagePath);
             }
         }
-        
         $blogPost->delete();
-        
-        return redirect()->back()->with('success', 'Blog post deleted successfully.');
+        return redirect()->route('admin.blog.index')->with('success', 'Blog post deleted successfully.');
     }
 }

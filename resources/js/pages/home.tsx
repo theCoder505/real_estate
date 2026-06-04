@@ -1,9 +1,9 @@
-import React, { useState, useCallback } from 'react';
-import { Head, Link, router } from '@inertiajs/react';
 import PublicLayout from '@/layouts/public-layout';
-import { Search, MapPin, BedDouble, Bath, Square, ArrowRight, Phone, MessageSquare, Quote, Heart, Award, ShieldCheck, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
-import useEmblaCarousel from 'embla-carousel-react';
+import { Head, Link, router } from '@inertiajs/react';
 import Autoplay from 'embla-carousel-autoplay';
+import useEmblaCarousel from 'embla-carousel-react';
+import { ArrowRight, Award, ChevronLeft, ChevronRight, MessageSquare, Phone, Quote, Search, ShieldCheck, Zap } from 'lucide-react';
+import React, { useCallback, useState } from 'react';
 
 interface Property {
     id: number;
@@ -69,43 +69,44 @@ export default function Home({ featuredProperties, latestNews, stats }: HomeProp
             <Head title="Venture Builders - Premier Real Estate Portfolio" />
 
             {/* 1. Hero Search Area */}
-            <section className="relative min-h-[85vh] lg:h-[calc(100vh-80px)] flex items-center justify-center bg-zinc-900 text-white py-20 overflow-hidden">
+            <section className="relative flex min-h-[85vh] items-center justify-center overflow-hidden bg-zinc-900 py-20 text-white lg:h-[calc(100vh-80px)]">
                 {/* Background Image with Dark Overlay */}
                 <div
-                    className="absolute inset-0 bg-cover bg-center z-0 scale-105 motion-safe:animate-[pulse_10s_ease-in-out_infinite]"
+                    className="absolute inset-0 z-0 scale-105 bg-cover bg-center motion-safe:animate-[pulse_10s_ease-in-out_infinite]"
                     style={{
                         backgroundImage: "url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1920&q=80')",
                     }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/95 via-zinc-950/80 to-zinc-900/60 z-10" />
+                <div className="absolute inset-0 z-10 bg-gradient-to-r from-zinc-950/95 via-zinc-950/80 to-zinc-900/60" />
 
-                <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-center lg:text-left">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div className="relative z-20 mx-auto w-full max-w-7xl px-4 text-center sm:px-6 lg:px-8 lg:text-left">
+                    <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
                         {/* Hero Text */}
-                        <div className="lg:col-span-7 space-y-6">
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-600/25 border border-orange-500/30 text-orange-400 rounded-full text-xs font-bold uppercase tracking-wider">
-                                <Zap className="w-3 h-3" /> Welcoming You Home
+                        <div className="space-y-6 lg:col-span-7">
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-orange-500/30 bg-orange-600/25 px-3 py-1 text-xs font-bold tracking-wider text-orange-400 uppercase">
+                                <Zap className="h-3 w-3" /> Welcoming You Home
                             </span>
-                            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1] text-white">
+                            <h1 className="text-4xl leading-[1.1] font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
                                 We Create Your <br />
-                                <span className="text-orange-500 bg-gradient-to-r from-orange-500 to-amber-400 bg-clip-text text-transparent">
+                                <span className="bg-gradient-to-r from-orange-500 to-amber-400 bg-clip-text text-orange-500 text-transparent">
                                     Dream Apartments
                                 </span>
                             </h1>
-                            <p className="text-zinc-300 text-base sm:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                                Venture Builders creates premium living architectures across prime locations. Explore our selection of modern apartments, luxury flats, and residential plots.
+                            <p className="mx-auto max-w-xl text-base leading-relaxed text-zinc-300 sm:text-lg lg:mx-0">
+                                Venture Builders creates premium living architectures across prime locations. Explore our selection of modern
+                                apartments, luxury flats, and residential plots.
                             </p>
-                            <div className="flex flex-wrap justify-center lg:justify-start gap-4">
+                            <div className="flex flex-wrap justify-center gap-4 lg:justify-start">
                                 <Link
                                     href={route('properties.index')}
-                                    className="px-6 py-3.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 hover:-translate-y-0.5 active:scale-95 flex items-center gap-2"
+                                    className="flex items-center gap-2 rounded-xl bg-orange-600 px-6 py-3.5 font-bold text-white shadow-lg shadow-orange-500/25 transition-all hover:-translate-y-0.5 hover:bg-orange-700 hover:shadow-orange-500/40 active:scale-95"
                                 >
                                     <span>Explore Properties</span>
-                                    <ArrowRight className="w-4 h-4" />
+                                    <ArrowRight className="h-4 w-4" />
                                 </Link>
                                 <Link
                                     href={route('about')}
-                                    className="px-6 py-3.5 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-xl border border-zinc-700 transition-all hover:-translate-y-0.5 active:scale-95"
+                                    className="rounded-xl border border-zinc-700 bg-zinc-800 px-6 py-3.5 font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-zinc-700 active:scale-95"
                                 >
                                     Learn More
                                 </Link>
@@ -113,42 +114,52 @@ export default function Home({ featuredProperties, latestNews, stats }: HomeProp
                         </div>
 
                         {/* Search Filter Panel */}
-                        <div className="lg:col-span-5 bg-white/10 backdrop-blur-md p-6 sm:p-8 rounded-3xl border border-white/15 shadow-2xl">
-                            <h3 className="text-xl font-bold mb-6 text-white text-left">Find Your Future Property</h3>
+                        <div className="rounded-3xl border border-white/15 bg-white/10 p-6 shadow-2xl backdrop-blur-md sm:p-8 lg:col-span-5">
+                            <h3 className="mb-6 text-left text-xl font-bold text-white">Find Your Future Property</h3>
                             <form onSubmit={handleSearch} className="space-y-4 text-left">
                                 <div>
-                                    <label className="block text-xs font-bold uppercase tracking-wider text-zinc-300 mb-2">Search Location or Name</label>
+                                    <label className="mb-2 block text-xs font-bold tracking-wider text-zinc-300 uppercase">
+                                        Search Location or Name
+                                    </label>
                                     <div className="relative">
                                         <input
                                             type="text"
                                             placeholder="e.g. Manhattan, New York"
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
-                                            className="w-full bg-zinc-950/45 border border-zinc-700/80 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-xl py-3.5 pl-11 pr-4 text-sm text-white placeholder-zinc-400 outline-none transition-colors"
+                                            className="w-full rounded-xl border border-zinc-700/80 bg-zinc-950/45 py-3.5 pr-4 pl-11 text-sm text-white placeholder-zinc-400 transition-colors outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
                                         />
-                                        <Search className="w-5 h-5 text-zinc-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                                        <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-zinc-400" />
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-bold uppercase tracking-wider text-zinc-300 mb-2">Property Type</label>
+                                    <label className="mb-2 block text-xs font-bold tracking-wider text-zinc-300 uppercase">Property Type</label>
                                     <select
                                         value={propertyType}
                                         onChange={(e) => setPropertyType(e.target.value)}
-                                        className="w-full bg-zinc-950/45 border border-zinc-700/80 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-xl py-3.5 px-4 text-sm text-zinc-200 outline-none transition-colors appearance-none"
+                                        className="w-full appearance-none rounded-xl border border-zinc-700/80 bg-zinc-950/45 px-4 py-3.5 text-sm text-zinc-200 transition-colors outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
                                     >
-                                        <option value="all" className="bg-zinc-900 text-white">All Properties</option>
-                                        <option value="apartment" className="bg-zinc-900 text-white">Apartments</option>
-                                        <option value="flat" className="bg-zinc-900 text-white">Flats</option>
-                                        <option value="plot" className="bg-zinc-900 text-white">Plots / Land</option>
+                                        <option value="all" className="bg-zinc-900 text-white">
+                                            All Properties
+                                        </option>
+                                        <option value="apartment" className="bg-zinc-900 text-white">
+                                            Apartments
+                                        </option>
+                                        <option value="flat" className="bg-zinc-900 text-white">
+                                            Flats
+                                        </option>
+                                        <option value="plot" className="bg-zinc-900 text-white">
+                                            Plots / Land
+                                        </option>
                                     </select>
                                 </div>
 
                                 <button
                                     type="submit"
-                                    className="w-full py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl transition-all shadow-md shadow-orange-600/20 active:scale-[0.98] mt-2 flex items-center justify-center gap-2"
+                                    className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-orange-600 py-4 font-bold text-white shadow-md shadow-orange-600/20 transition-all hover:bg-orange-700 active:scale-[0.98]"
                                 >
-                                    <Search className="w-4 h-4" />
+                                    <Search className="h-4 w-4" />
                                     <span>Find Properties</span>
                                 </button>
                             </form>
@@ -158,65 +169,67 @@ export default function Home({ featuredProperties, latestNews, stats }: HomeProp
             </section>
 
             {/* 2. Company Stats Section */}
-            <section className="py-20 bg-white dark:bg-zinc-950 transition-colors duration-300">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+            <section className="bg-white py-20 transition-colors duration-300 dark:bg-zinc-950">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-12">
                         {/* Stats Banner with Experience Badge */}
-                        <div className="lg:col-span-5 relative">
-                            <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border border-zinc-200 dark:border-zinc-800">
+                        <div className="relative lg:col-span-5">
+                            <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-zinc-200 shadow-2xl dark:border-zinc-800">
                                 <img
                                     src="https://preview.colorlib.com/theme/hus/img/banner/banner.png"
                                     alt="About Venture Builders"
-                                    className="object-cover w-full h-full"
+                                    className="h-full w-full object-cover"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/50 to-transparent" />
                             </div>
                             {/* Float Badge */}
-                            <div className="absolute -bottom-8 -right-4 sm:right-6 bg-orange-600 text-white p-6 rounded-3xl shadow-xl shadow-orange-600/20 text-center max-w-[180px] hover:scale-105 transition-transform duration-300">
-                                <span className="block font-black text-4xl">{stats.experience}</span>
-                                <span className="block text-xs font-bold uppercase tracking-wide text-orange-100 mt-1">Years Of Excellence</span>
+                            <div className="absolute -right-4 -bottom-8 max-w-[180px] rounded-3xl bg-orange-600 p-6 text-center text-white shadow-xl shadow-orange-600/20 transition-transform duration-300 hover:scale-105 sm:right-6">
+                                <span className="block text-4xl font-black">{stats.experience}</span>
+                                <span className="mt-1 block text-xs font-bold tracking-wide text-orange-100 uppercase">Years Of Excellence</span>
                             </div>
                         </div>
 
                         {/* Description Text */}
-                        <div className="lg:col-span-7 space-y-6">
+                        <div className="space-y-6 lg:col-span-7">
                             <div className="space-y-2">
-                                <span className="text-orange-600 font-extrabold text-sm uppercase tracking-wider">Who We Are</span>
-                                <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white leading-tight">
+                                <span className="text-sm font-extrabold tracking-wider text-orange-600 uppercase">Who We Are</span>
+                                <h2 className="text-3xl leading-tight font-extrabold text-zinc-900 sm:text-4xl dark:text-white">
                                     We Are Venture Builders <br />
-                                    <span className="text-zinc-400 dark:text-zinc-500 font-normal">Your Premier Partner in Real Estate</span>
+                                    <span className="font-normal text-zinc-400 dark:text-zinc-500">Your Premier Partner in Real Estate</span>
                                 </h2>
                             </div>
-                            <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed text-sm sm:text-base">
-                                Founded on a vision to deliver exceptional residential and commercial spaces, Venture Builders has grown into a leading portfolio real estate company. We specialize in designing modern smart-homes, developing premium building assets, and identifying high-growth land plots.
+                            <p className="text-sm leading-relaxed text-zinc-600 sm:text-base dark:text-zinc-300">
+                                Founded on a vision to deliver exceptional residential and commercial spaces, Venture Builders has grown into a
+                                leading portfolio real estate company. We specialize in designing modern smart-homes, developing premium building
+                                assets, and identifying high-growth land plots.
                             </p>
-                            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                            <ul className="grid grid-cols-1 gap-4 text-sm font-semibold text-zinc-700 sm:grid-cols-2 dark:text-zinc-300">
                                 <li className="flex items-center gap-2">
-                                    <span className="w-2 h-2 rounded-full bg-orange-600" />
+                                    <span className="h-2 w-2 rounded-full bg-orange-600" />
                                     <span>Architect-Led Modern Designs</span>
                                 </li>
                                 <li className="flex items-center gap-2">
-                                    <span className="w-2 h-2 rounded-full bg-orange-600" />
+                                    <span className="h-2 w-2 rounded-full bg-orange-600" />
                                     <span>High-Grade Construction Materials</span>
                                 </li>
                                 <li className="flex items-center gap-2">
-                                    <span className="w-2 h-2 rounded-full bg-orange-600" />
+                                    <span className="h-2 w-2 rounded-full bg-orange-600" />
                                     <span>Smart Integrated Living Systems</span>
                                 </li>
                                 <li className="flex items-center gap-2">
-                                    <span className="w-2 h-2 rounded-full bg-orange-600" />
+                                    <span className="h-2 w-2 rounded-full bg-orange-600" />
                                     <span>Clean Title deeds & Legit paperwork</span>
                                 </li>
                             </ul>
 
-                            <div className="pt-6 border-t border-zinc-150 dark:border-zinc-800 flex gap-12">
+                            <div className="border-zinc-150 flex gap-12 border-t pt-6 dark:border-zinc-800">
                                 <div className="text-center sm:text-left">
                                     <span className="block text-3xl font-black text-zinc-900 dark:text-white">{stats.buildings}+</span>
-                                    <span className="text-xs text-zinc-500 uppercase font-bold tracking-wide">Buildings Completed</span>
+                                    <span className="text-xs font-bold tracking-wide text-zinc-500 uppercase">Buildings Completed</span>
                                 </div>
                                 <div className="text-center sm:text-left">
                                     <span className="block text-3xl font-black text-zinc-900 dark:text-white">{stats.clients}+</span>
-                                    <span className="text-xs text-zinc-500 uppercase font-bold tracking-wide">Happy Clients</span>
+                                    <span className="text-xs font-bold tracking-wide text-zinc-500 uppercase">Happy Clients</span>
                                 </div>
                             </div>
                         </div>
@@ -225,105 +238,105 @@ export default function Home({ featuredProperties, latestNews, stats }: HomeProp
             </section>
 
             {/* 3. Core Facilities Showcase */}
-            <section className="py-20 bg-black text-white relative">
-                <div className="absolute inset-0 bg-[url('/assets/images/sign_bg.png')] bg-no-repeat bg-cover bg-center opacity-10"></div>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-                        <span className="text-orange-500 font-extrabold text-sm uppercase tracking-wider">Quality Features</span>
-                        <h2 className="text-3xl sm:text-4xl font-extrabold text-white">Our Signature Facilities</h2>
-                        <p className="text-zinc-400 text-sm sm:text-base">
+            <section className="relative bg-black py-20 text-white">
+                <div className="absolute inset-0 bg-[url('/assets/images/sign_bg.png')] bg-cover bg-center bg-no-repeat opacity-10"></div>
+                <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="mx-auto mb-16 max-w-3xl space-y-3 text-center">
+                        <span className="text-sm font-extrabold tracking-wider text-orange-500 uppercase">Quality Features</span>
+                        <h2 className="text-3xl font-extrabold text-white sm:text-4xl">Our Signature Facilities</h2>
+                        <p className="text-sm text-zinc-400 sm:text-base">
                             We pride ourselves on offering amenities and architectural steps that set our residential layouts apart.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
                         {/* Facility 1 */}
-                        <div className="bg-zinc-800/50 border border-zinc-800 p-8 rounded-3xl space-y-4 hover:border-orange-500/30 hover:bg-zinc-800/80 transition-all hover:-translate-y-1">
-                            <div className="p-4 bg-orange-600 text-white rounded-2xl inline-block shadow-md shadow-orange-500/10">
-                                <Award className="w-6 h-6" />
+                        <div className="space-y-4 rounded-3xl border border-zinc-800 bg-zinc-800/50 p-8 transition-all hover:-translate-y-1 hover:border-orange-500/30 hover:bg-zinc-800/80">
+                            <div className="inline-block rounded-2xl bg-orange-600 p-4 text-white shadow-md shadow-orange-500/10">
+                                <Award className="h-6 w-6" />
                             </div>
                             <h3 className="text-xl font-bold">Architectural Design</h3>
-                            <p className="text-zinc-400 text-sm leading-relaxed">
-                                Every structure begins with a dedicated design stage focusing on natural ventilation, aesthetic integrity, and ergonomic flow.
+                            <p className="text-sm leading-relaxed text-zinc-400">
+                                Every structure begins with a dedicated design stage focusing on natural ventilation, aesthetic integrity, and
+                                ergonomic flow.
                             </p>
                         </div>
                         {/* Facility 2 */}
-                        <div className="bg-zinc-800/50 border border-zinc-800 p-8 rounded-3xl space-y-4 hover:border-orange-500/30 hover:bg-zinc-800/80 transition-all hover:-translate-y-1">
-                            <div className="p-4 bg-orange-600 text-white rounded-2xl inline-block shadow-md shadow-orange-500/10">
-                                <ShieldCheck className="w-6 h-6" />
+                        <div className="space-y-4 rounded-3xl border border-zinc-800 bg-zinc-800/50 p-8 transition-all hover:-translate-y-1 hover:border-orange-500/30 hover:bg-zinc-800/80">
+                            <div className="inline-block rounded-2xl bg-orange-600 p-4 text-white shadow-md shadow-orange-500/10">
+                                <ShieldCheck className="h-6 w-6" />
                             </div>
                             <h3 className="text-xl font-bold">Secure Gated Estates</h3>
-                            <p className="text-zinc-400 text-sm leading-relaxed">
+                            <p className="text-sm leading-relaxed text-zinc-400">
                                 Safety is paramount. Enjoy 24/7 manned gates, CCTV integration, and intercom services for every building.
                             </p>
                         </div>
                         {/* Facility 3 */}
-                        <div className="bg-zinc-800/50 border border-zinc-800 p-8 rounded-3xl space-y-4 hover:border-orange-500/30 hover:bg-zinc-800/80 transition-all hover:-translate-y-1">
-                            <div className="p-4 bg-orange-600 text-white rounded-2xl inline-block shadow-md shadow-orange-500/10">
-                                <Zap className="w-6 h-6" />
+                        <div className="space-y-4 rounded-3xl border border-zinc-800 bg-zinc-800/50 p-8 transition-all hover:-translate-y-1 hover:border-orange-500/30 hover:bg-zinc-800/80">
+                            <div className="inline-block rounded-2xl bg-orange-600 p-4 text-white shadow-md shadow-orange-500/10">
+                                <Zap className="h-6 w-6" />
                             </div>
                             <h3 className="text-xl font-bold">Smart System Integration</h3>
-                            <p className="text-zinc-400 text-sm leading-relaxed">
+                            <p className="text-sm leading-relaxed text-zinc-400">
                                 Automated apartments with smart lighting controls, security alerts, and HVAC systems managed directly from your phone.
                             </p>
                         </div>
                     </div>
 
-                    <div className="text-center mt-12">
+                    <div className="mt-12 text-center">
                         <Link
                             href={route('facilities')}
-                            className="inline-flex items-center gap-1 font-bold text-orange-500 hover:text-orange-400 transition-colors"
+                            className="inline-flex items-center gap-1 font-bold text-orange-500 transition-colors hover:text-orange-400"
                         >
                             <span>View All Facilities & Services</span>
-                            <ArrowRight className="w-4 h-4" />
+                            <ArrowRight className="h-4 w-4" />
                         </Link>
                     </div>
                 </div>
             </section>
 
             {/* 4. Featured Listings Slider */}
-            <section className="pt-40 pb-10 bg-white dark:bg-zinc-950 transition-colors duration-300">
+            <section className="bg-white pt-40 pb-10 transition-colors duration-300 dark:bg-zinc-950">
                 <div className="">
-
-                    <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-                        <span className="text-orange-600 font-extrabold text-sm uppercase tracking-wider">Handpicked For You</span>
-                        <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white">Featured Properties</h2>
-                        <p className="text-zinc-500 text-sm sm:text-base">
+                    <div className="mx-auto mb-16 max-w-3xl space-y-3 text-center">
+                        <span className="text-sm font-extrabold tracking-wider text-orange-600 uppercase">Handpicked For You</span>
+                        <h2 className="text-3xl font-extrabold text-zinc-900 sm:text-4xl dark:text-white">Featured Properties</h2>
+                        <p className="text-sm text-zinc-500 sm:text-base">
                             Discover our curated selection of premium properties, ready for you to call home.
                         </p>
                     </div>
-                    <div className="relative group/slider">
+                    <div className="group/slider relative">
                         <div className="overflow-hidden" ref={emblaRef}>
-                            <div className="flex -ml-[2px] gap-4 lg:gap-6">
+                            <div className="-ml-[2px] flex gap-4 lg:gap-6">
                                 {featuredProperties.map((property) => (
-                                    <div key={property.id} className="flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.333333%] min-w-0 pl-[2px]">
-                                        <article className="relative aspect-[4/3] group overflow-hidden cursor-pointer">
+                                    <div key={property.id} className="min-w-0 flex-[0_0_100%] pl-[2px] md:flex-[0_0_50%] lg:flex-[0_0_33.333333%]">
+                                        <article className="group relative aspect-[4/3] cursor-pointer overflow-hidden">
                                             <img
                                                 src={property.image_path}
                                                 alt={property.title}
-                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100"
+                                                className="h-full w-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105 group-hover:opacity-100"
                                                 loading="lazy"
                                             />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none" />
+                                            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
 
-                                            <div className="absolute bottom-0 left-0 w-full p-8 text-left pointer-events-none">
-                                                <h3 className="text-white text-2xl font-bold mb-2">${property.price.toLocaleString()}</h3>
-                                                <p className="text-zinc-200 font-semibold text-sm uppercase tracking-widest mb-4 line-clamp-1">
+                                            <div className="pointer-events-none absolute bottom-0 left-0 w-full p-8 text-left">
+                                                <h3 className="mb-2 text-2xl font-bold text-white">${property.price.toLocaleString()}</h3>
+                                                <p className="mb-4 line-clamp-1 text-sm font-semibold tracking-widest text-zinc-200 uppercase">
                                                     {property.title}
                                                 </p>
 
                                                 {property.type !== 'plot' ? (
-                                                    <div className="flex items-center text-zinc-300 text-xs font-medium space-x-3 uppercase tracking-wider">
+                                                    <div className="flex items-center space-x-3 text-xs font-medium tracking-wider text-zinc-300 uppercase">
                                                         <span>{property.beds}BD</span>
-                                                        <span className="w-[1px] h-3 bg-zinc-500"></span>
+                                                        <span className="h-3 w-[1px] bg-zinc-500"></span>
                                                         <span>{property.baths}BA</span>
-                                                        <span className="w-[1px] h-3 bg-zinc-500"></span>
+                                                        <span className="h-3 w-[1px] bg-zinc-500"></span>
                                                         <span>{property.sqft} SF</span>
                                                     </div>
                                                 ) : (
-                                                    <div className="flex items-center text-zinc-300 text-xs font-medium space-x-3 uppercase tracking-wider">
+                                                    <div className="flex items-center space-x-3 text-xs font-medium tracking-wider text-zinc-300 uppercase">
                                                         <span>PLOT</span>
-                                                        <span className="w-[1px] h-3 bg-zinc-500"></span>
+                                                        <span className="h-3 w-[1px] bg-zinc-500"></span>
                                                         <span>{property.sqft} SF</span>
                                                     </div>
                                                 )}
@@ -340,80 +353,93 @@ export default function Home({ featuredProperties, latestNews, stats }: HomeProp
 
                         <button
                             onClick={scrollPrev}
-                            className="absolute top-1/2 -translate-y-1/2 left-4 md:left-8 w-12 h-12 bg-white/80 hover:bg-white text-zinc-900 rounded-full flex items-center justify-center shadow-xl opacity-0 group-hover/slider:opacity-100 transition-all duration-300 z-10 backdrop-blur-sm focus:outline-none"
+                            className="absolute top-1/2 left-4 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-zinc-900 opacity-0 shadow-xl backdrop-blur-sm transition-all duration-300 group-hover/slider:opacity-100 hover:bg-white focus:outline-none md:left-8"
                             aria-label="Previous slide"
                         >
-                            <ChevronLeft className="w-6 h-6" />
+                            <ChevronLeft className="h-6 w-6" />
                         </button>
                         <button
                             onClick={scrollNext}
-                            className="absolute top-1/2 -translate-y-1/2 right-4 md:right-8 w-12 h-12 bg-white/80 hover:bg-white text-zinc-900 rounded-full flex items-center justify-center shadow-xl opacity-0 group-hover/slider:opacity-100 transition-all duration-300 z-10 backdrop-blur-sm focus:outline-none"
+                            className="absolute top-1/2 right-4 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-zinc-900 opacity-0 shadow-xl backdrop-blur-sm transition-all duration-300 group-hover/slider:opacity-100 hover:bg-white focus:outline-none md:right-8"
                             aria-label="Next slide"
                         >
-                            <ChevronRight className="w-6 h-6" />
+                            <ChevronRight className="h-6 w-6" />
                         </button>
                     </div>
                 </div>
             </section>
 
             {/* 5. Client Testimonials Area */}
-            <section className="py-20 bg-white dark:bg-zinc-950 transition-colors duration-300">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-                        <span className="text-orange-600 font-extrabold text-sm uppercase tracking-wider">Testimonials</span>
-                        <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white">What Our Clients Say</h2>
-                        <p className="text-zinc-500 text-sm sm:text-base">
+            <section className="bg-white py-20 transition-colors duration-300 dark:bg-zinc-950">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="mx-auto mb-16 max-w-3xl space-y-3 text-center">
+                        <span className="text-sm font-extrabold tracking-wider text-orange-600 uppercase">Testimonials</span>
+                        <h2 className="text-3xl font-extrabold text-zinc-900 sm:text-4xl dark:text-white">What Our Clients Say</h2>
+                        <p className="text-sm text-zinc-500 sm:text-base">
                             Read testimonies from families and firms who purchased their homes through Venture Builders.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                         {/* Testimonial 1 */}
-                        <div className="bg-zinc-50 dark:bg-zinc-900 p-8 rounded-3xl  space-y-6 relative">
-                            <Quote className="w-10 h-10 text-orange-500/20 absolute right-8 top-8" />
-                            <p className="text-zinc-600 dark:text-zinc-300 italic text-sm leading-relaxed">
-                                "We bought our 3-bedroom flat in Chicago. The Venture Builders team walked us through the paperwork, connection of smart systems, and delivered exactly what was promised. 100% recommended!"
+                        <div className="relative space-y-6 rounded-3xl bg-zinc-50 p-8 dark:bg-zinc-900">
+                            <Quote className="absolute top-8 right-8 h-10 w-10 text-orange-500/20" />
+                            <p className="text-sm leading-relaxed text-zinc-600 italic dark:text-zinc-300">
+                                "We bought our 3-bedroom flat in Chicago. The Venture Builders team walked us through the paperwork, connection of
+                                smart systems, and delivered exactly what was promised. 100% recommended!"
                             </p>
                             <div className="flex items-center gap-3">
-                                <div className="w-12 h-12 bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
-                                    <img src="https://preview.colorlib.com/theme/hus/img/testmonial/author.png" alt="Margaret Lawson" className="w-full h-full object-cover" />
+                                <div className="h-12 w-12 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
+                                    <img
+                                        src="https://preview.colorlib.com/theme/hus/img/testmonial/author.png"
+                                        alt="Margaret Lawson"
+                                        className="h-full w-full object-cover"
+                                    />
                                 </div>
                                 <div>
-                                    <h4 className="font-extrabold text-zinc-950 dark:text-white text-sm">Margaret Lawson</h4>
+                                    <h4 className="text-sm font-extrabold text-zinc-950 dark:text-white">Margaret Lawson</h4>
                                     <span className="text-xs text-zinc-400">Creative Director</span>
                                 </div>
                             </div>
                         </div>
 
                         {/* Testimonial 2 */}
-                        <div className="bg-zinc-50 dark:bg-zinc-900 p-8 rounded-3xl  space-y-6 relative">
-                            <Quote className="w-10 h-10 text-orange-500/20 absolute right-8 top-8" />
-                            <p className="text-zinc-600 dark:text-zinc-300 italic text-sm leading-relaxed">
-                                "The luxury penthouse in Miami Beach is a dream come true. The panoramic ocean views and wraps-around terrace are stunning. Excellent materials, superb acoustic insulation, and state of the art finishes."
+                        <div className="relative space-y-6 rounded-3xl bg-zinc-50 p-8 dark:bg-zinc-900">
+                            <Quote className="absolute top-8 right-8 h-10 w-10 text-orange-500/20" />
+                            <p className="text-sm leading-relaxed text-zinc-600 italic dark:text-zinc-300">
+                                "The luxury penthouse in Miami Beach is a dream come true. The panoramic ocean views and wraps-around terrace are
+                                stunning. Excellent materials, superb acoustic insulation, and state of the art finishes."
                             </p>
                             <div className="flex items-center gap-3">
-                                <div className="w-12 h-12 bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
-                                    <img src="https://preview.colorlib.com/theme/hus/img/testmonial/author2.png" alt="Donald Sinclair" className="w-full h-full object-cover" />
+                                <div className="h-12 w-12 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
+                                    <img
+                                        src="https://preview.colorlib.com/theme/hus/img/testmonial/author2.png"
+                                        alt="Donald Sinclair"
+                                        className="h-full w-full object-cover"
+                                    />
                                 </div>
                                 <div>
-                                    <h4 className="font-extrabold text-zinc-950 dark:text-white text-sm">Donald Sinclair</h4>
+                                    <h4 className="text-sm font-extrabold text-zinc-950 dark:text-white">Donald Sinclair</h4>
                                     <span className="text-xs text-zinc-400">Architectural Investor</span>
                                 </div>
                             </div>
                         </div>
 
                         {/* Testimonial 3 */}
-                        <div className="bg-zinc-50 dark:bg-zinc-900 p-8 rounded-3xl  space-y-6 relative">
-                            <Quote className="w-10 h-10 text-orange-500/20 absolute right-8 top-8" />
-                            <p className="text-zinc-600 dark:text-zinc-300 italic text-sm leading-relaxed">
-                                "Venture Builders made land plot acquisition simple. The corner lot in Austin came with all utility connections pre-established. Paved road access and papers ready. Very professional service."
+                        <div className="relative space-y-6 rounded-3xl bg-zinc-50 p-8 dark:bg-zinc-900">
+                            <Quote className="absolute top-8 right-8 h-10 w-10 text-orange-500/20" />
+                            <p className="text-sm leading-relaxed text-zinc-600 italic dark:text-zinc-300">
+                                "Venture Builders made land plot acquisition simple. The corner lot in Austin came with all utility connections
+                                pre-established. Paved road access and papers ready. Very professional service."
                             </p>
                             <div className="flex items-center gap-3">
-                                <div className="w-12 h-12 bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
-                                    <div className="w-full h-full bg-orange-600 text-white flex items-center justify-center font-bold text-sm">RH</div>
+                                <div className="h-12 w-12 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
+                                    <div className="flex h-full w-full items-center justify-center bg-orange-600 text-sm font-bold text-white">
+                                        RH
+                                    </div>
                                 </div>
                                 <div>
-                                    <h4 className="font-extrabold text-zinc-950 dark:text-white text-sm">Robert Harris</h4>
+                                    <h4 className="text-sm font-extrabold text-zinc-950 dark:text-white">Robert Harris</h4>
                                     <span className="text-xs text-zinc-400">Private Home Builder</span>
                                 </div>
                             </div>
@@ -423,33 +449,34 @@ export default function Home({ featuredProperties, latestNews, stats }: HomeProp
             </section>
 
             {/* 6. Quotation Callout Banner */}
-            <section className="bg-orange-600 py-16 text-white relative overflow-hidden">
-                <div className="absolute inset-0 bg-cover bg-center opacity-10 mix-blend-overlay"
+            <section className="relative overflow-hidden bg-orange-600 py-16 text-white">
+                <div
+                    className="absolute inset-0 bg-cover bg-center opacity-10 mix-blend-overlay"
                     style={{ backgroundImage: "url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80')" }}
                 />
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
-                    <div className="text-center lg:text-left space-y-2 max-w-xl">
-                        <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Get a Free Quotation Today!</h2>
-                        <p className="text-orange-100 text-sm sm:text-base">
+                <div className="relative z-10 mx-auto flex max-w-7xl flex-col items-center justify-between gap-8 px-4 sm:px-6 lg:flex-row lg:px-8">
+                    <div className="max-w-xl space-y-2 text-center lg:text-left">
+                        <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Get a Free Quotation Today!</h2>
+                        <p className="text-sm text-orange-100 sm:text-base">
                             Have specific architectural designs or locations in mind? Send our development team your project ideas.
                         </p>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row items-center gap-6 shrink-0">
-                        <div className="flex items-center gap-3 bg-zinc-950/20 px-6 py-4 rounded-2xl border border-white/10 w-full sm:w-auto">
-                            <div className="p-3 bg-white text-orange-600 rounded-xl">
-                                <Phone className="w-5 h-5" />
+                    <div className="flex shrink-0 flex-col items-center gap-6 sm:flex-row">
+                        <div className="flex w-full items-center gap-3 rounded-2xl border border-white/10 bg-zinc-950/20 px-6 py-4 sm:w-auto">
+                            <div className="rounded-xl bg-white p-3 text-orange-600">
+                                <Phone className="h-5 w-5" />
                             </div>
                             <div className="text-left">
-                                <span className="block text-xs text-orange-200 font-bold uppercase tracking-wider">Say Hello</span>
-                                <span className="block text-lg font-black tracking-tight">+44 563 986 4785</span>
+                                <span className="block text-xs font-bold tracking-wider text-orange-200 uppercase">Say Hello</span>
+                                <span className="block text-lg font-black tracking-tight">+3232432423</span>
                             </div>
                         </div>
                         <Link
                             href={route('contact')}
-                            className="px-8 py-4 bg-white text-orange-600 hover:bg-zinc-100 font-bold rounded-2xl shadow-lg transition-all active:scale-[0.98] w-full sm:w-auto text-center flex items-center justify-center gap-2"
+                            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-8 py-4 text-center font-bold text-orange-600 shadow-lg transition-all hover:bg-zinc-100 active:scale-[0.98] sm:w-auto"
                         >
-                            <MessageSquare className="w-4 h-4" />
+                            <MessageSquare className="h-4 w-4" />
                             <span>Contact Us</span>
                         </Link>
                     </div>
@@ -457,55 +484,59 @@ export default function Home({ featuredProperties, latestNews, stats }: HomeProp
             </section>
 
             {/* 7. Latest News / Blog Section */}
-            <section className="py-20 bg-zinc-50 dark:bg-zinc-900 transition-colors duration-300">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-                        <span className="text-orange-600 font-extrabold text-sm uppercase tracking-wider">Market Insights</span>
-                        <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white">Our Latest News</h2>
-                        <p className="text-zinc-500 text-sm sm:text-base">
+            <section className="bg-zinc-50 py-20 transition-colors duration-300 dark:bg-zinc-900">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="mx-auto mb-16 max-w-3xl space-y-3 text-center">
+                        <span className="text-sm font-extrabold tracking-wider text-orange-600 uppercase">Market Insights</span>
+                        <h2 className="text-3xl font-extrabold text-zinc-900 sm:text-4xl dark:text-white">Our Latest News</h2>
+                        <p className="text-sm text-zinc-500 sm:text-base">
                             Stay up-to-date with property investments, smart technology trends, and advice on buying your first flat.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    <div className="mx-auto grid max-w-4xl grid-cols-1 gap-8 md:grid-cols-2">
                         {latestNews.map((post) => (
                             <article
                                 key={post.id}
-                                className="bg-white dark:bg-zinc-950 rounded-3xl overflow-hidden  shadow-sm hover:shadow-md hover:border-orange-500/20 dark:hover:border-orange-500/20 transition-all duration-300 group flex flex-col h-full"
+                                className="group flex h-full flex-col overflow-hidden rounded-3xl bg-white shadow-sm transition-all duration-300 hover:border-orange-500/20 hover:shadow-md dark:bg-zinc-950 dark:hover:border-orange-500/20"
                             >
-                                <div className="relative aspect-[16/9] overflow-hidden bg-zinc-150 shrink-0">
+                                <div className="bg-zinc-150 relative aspect-[16/9] shrink-0 overflow-hidden">
                                     <img
                                         src={post.image_path}
                                         alt={post.title}
-                                        className="object-cover w-full h-full group-hover:scale-103 transition-transform duration-500"
+                                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-103"
                                         loading="lazy"
                                     />
-                                    <span className="absolute top-4 left-4 bg-orange-600 text-white text-xs font-bold px-3 py-1 rounded-lg">
+                                    <span className="absolute top-4 left-4 rounded-lg bg-orange-600 px-3 py-1 text-xs font-bold text-white">
                                         {post.category}
                                     </span>
                                 </div>
 
-                                <div className="p-6 flex flex-col flex-grow justify-between space-y-4">
+                                <div className="flex flex-grow flex-col justify-between space-y-4 p-6">
                                     <div className="space-y-2">
-                                        <div className="text-xs text-zinc-400 font-bold flex gap-3">
+                                        <div className="flex gap-3 text-xs font-bold text-zinc-400">
                                             <span>By {post.author}</span>
                                             <span>•</span>
-                                            <span>{new Date(post.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                                            <span>
+                                                {new Date(post.published_at).toLocaleDateString('en-US', {
+                                                    month: 'short',
+                                                    day: 'numeric',
+                                                    year: 'numeric',
+                                                })}
+                                            </span>
                                         </div>
-                                        <h3 className="font-extrabold text-lg sm:text-xl text-zinc-900 dark:text-white line-clamp-2 leading-tight group-hover:text-orange-600 transition-colors">
+                                        <h3 className="line-clamp-2 text-lg leading-tight font-extrabold text-zinc-900 transition-colors group-hover:text-orange-600 sm:text-xl dark:text-white">
                                             {post.title}
                                         </h3>
-                                        <p className="text-sm text-zinc-500 dark:text-zinc-400 line-clamp-3 leading-relaxed">
-                                            {post.excerpt}
-                                        </p>
+                                        <p className="line-clamp-3 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{post.excerpt}</p>
                                     </div>
 
                                     <Link
                                         href={route('blog.show', post.id)}
-                                        className="inline-flex items-center gap-1 text-sm font-bold text-orange-600 hover:text-orange-700 dark:text-orange-500 dark:hover:text-orange-400 self-start transition-colors group/link"
+                                        className="group/link inline-flex items-center gap-1 self-start text-sm font-bold text-orange-600 transition-colors hover:text-orange-700 dark:text-orange-500 dark:hover:text-orange-400"
                                     >
                                         <span>Read article</span>
-                                        <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
+                                        <ArrowRight className="h-4 w-4 transition-transform group-hover/link:translate-x-1" />
                                     </Link>
                                 </div>
                             </article>

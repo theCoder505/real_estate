@@ -33,7 +33,7 @@ class PropertyController extends Controller
             'status' => 'required|string',
             'featured' => 'boolean',
             'features' => 'nullable|array',
-            'image' => 'nullable|image|max:2048'
+            'image' => 'nullable|image|max:10240'
         ]);
 
         $validated['slug'] = Str::slug($validated['title']);
@@ -42,7 +42,7 @@ class PropertyController extends Controller
             $file = $request->file('image');
             $filename = 'property_' . time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('assets/images'), $filename);
-            $validated['image_path'] = 'assets/images/' . $filename;
+            $validated['image_path'] = '/assets/images/' . $filename;
         }
 
         Property::create($validated);
@@ -64,7 +64,7 @@ class PropertyController extends Controller
             'status' => 'required|string',
             'featured' => 'boolean',
             'features' => 'nullable|array',
-            'image' => 'nullable|image|max:2048'
+            'image' => 'nullable|image|max:10240'
         ]);
 
         $validated['slug'] = Str::slug($validated['title']);
@@ -80,7 +80,7 @@ class PropertyController extends Controller
             $file = $request->file('image');
             $filename = 'property_' . time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('assets/images'), $filename);
-            $validated['image_path'] = 'assets/images/' . $filename;
+            $validated['image_path'] = '/assets/images/' . $filename;
         }
 
         $property->update($validated);

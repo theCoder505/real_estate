@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use App\Models\Setting;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -38,8 +39,11 @@ class HandleInertiaRequests extends Middleware
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
+        // Load site settings once and share globally
+        $siteSettings = Setting::first();
+        $socialLinks = $siteSettings?->social_links ?? [];
+
         return array_merge(parent::share($request), [
-            ...parent::share($request),
             'name' => config('app.name'),
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
@@ -49,6 +53,20 @@ class HandleInertiaRequests extends Middleware
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),
             ],
+            'settings' => $siteSettings ? [
+                'company_name'     => $siteSettings->brand_name,
+                'contact_email'    => $siteSettings->contact_email,
+                'contact_phone'    => $siteSettings->contact_phone,
+                'contact_address'  => $siteSettings->address,
+                'footer_text'      => $siteSettings->footer_text,
+                'google_map_iframe'=> $siteSettings->google_map_iframe,
+                'logo_path'        => $siteSettings->logo_path,
+                'icon_path'        => $siteSettings->icon_path,
+                'facebook_url'     => $socialLinks['facebook'] ?? null,
+                'twitter_url'      => $socialLinks['twitter'] ?? null,
+                'instagram_url'    => $socialLinks['instagram'] ?? null,
+                'linkedin_url'     => $socialLinks['linkedin'] ?? null,
+            ] : null,
         ]);
     }
 }

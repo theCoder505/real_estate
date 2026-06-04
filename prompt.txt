@@ -1,21 +1,146 @@
-now make the related models and middlewares for the website.
+1) Properties images can be multiple, so admin can sset multi images for one property and all will be visible to the surface panel as well.
 
-then complete the routes and controllers works for the workflows.
+2) Can not edit or delete the Blog posts, shows 303 status in network always and not working or updating the blogs.
 
-create related pages in tsx and table will be there for already added data.
-there will be popup for crud operations and image can be preview there.
+3) Make the settings page design better please. In settings page broker name and image can also set. image can be preview like logo and icon.
+our journey text, years_of_experience, building_finished, satidfied_clients, expert_agents (these will replicate iin about page as well)
+our_mission, our_vission these texts ass well.
 
-Admin can set social links, footer data, brand name (reflects in .env file also) as Settings model & miigration. contact email, phone, location, logo, brand icon all these belongs to settings, and will be visible in the frontend in the footer or header. and brand name will be visible in the tab title also. Applogo is always upload as 'logo.png' under the 'public/assets/images/' folder. and the app icon as 'icon.png' under the 'public/assets/images/' folder. so if logo or icon changes then rename the file as this name. Set it in the app.blade.php as the brand icon as well please. Set google map iframe location as well in the settings.
+4) Add team members option and make that dynamic ass well please.
 
-So:
-Property, blogs/news, about section data, facilitiess card data, featured properties, testimonials, about, terms, privacy every pages will be dynamic.
+5) In the contact page google iframe not showing from the settings. show that properly and full width of that page please.
+
+6) There the cash showing as usd ($) in the settings page, it should show like currency code currency value, like EUR (Euro) can be set and that will be shown to the entire website.
+
+7) Keep the new things in ssettings as nullable please while do the migration, update the model accordingly as well.
+
+8) In landing page show first 10 testimonials as slider. there will be a page for all tesstimonials and it will show all the testimonials.
+
+9) in home page instead this:
+<span className="block text-lg font-black tracking-tight">+3232432423</span>
+set the contact number here as well please.
+building_finished, satidfied_clients number will also set to homepage and infact in every pages where needed!
+
+10) In footer if ssomeone subscribe as newsletter, then that email will be stored in the database and in admin panel there will be a page to show all the subscribed newsletter emails. and admin can delete as well. If already subscribed that will be informed as well in the footer popup.
 
 
-In Contact us page, it will save data in the database and admin can view it in the admin panel and also will send email to admin when a user sends contact message, and mail back will be to the user when admin replies from the admin panel.
-The contact field will be OTP verified (so add otp period, it will expire after 10 minutes). So only verified emails can ssend contact message, thus it will prevent spamming as well. Do the email templates in the views/mailss folder.
+
+11) Lastly solve this error in email changing in the /settings/profile page:
+# Error - Internal Server Error
+
+Call to undefined method App\Http\Controllers\Settings\ProfileController::sendOtp()
+
+PHP 8.2.12
+Laravel 12.61.0
+127.0.0.1:8000
+
+## Stack Trace
+
+0 - vendor\laravel\framework\src\Illuminate\Routing\ControllerDispatcher.php:46
+1 - vendor\laravel\framework\src\Illuminate\Routing\Route.php:265
+2 - vendor\laravel\framework\src\Illuminate\Routing\Route.php:211
+3 - vendor\laravel\framework\src\Illuminate\Routing\Router.php:822
+4 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:180
+5 - app\Http\Middleware\InjectSettings.php:24
+6 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+7 - vendor\laravel\framework\src\Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets.php:32
+8 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+9 - vendor\inertiajs\inertia-laravel\src\Middleware.php:122
+10 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+11 - vendor\laravel\framework\src\Illuminate\Routing\Middleware\SubstituteBindings.php:50
+12 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+13 - vendor\laravel\framework\src\Illuminate\Auth\Middleware\Authenticate.php:63
+14 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+15 - vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken.php:87
+16 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+17 - vendor\laravel\framework\src\Illuminate\View\Middleware\ShareErrorsFromSession.php:48
+18 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+19 - vendor\laravel\framework\src\Illuminate\Session\Middleware\StartSession.php:120
+20 - vendor\laravel\framework\src\Illuminate\Session\Middleware\StartSession.php:63
+21 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+22 - vendor\laravel\framework\src\Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse.php:36
+23 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+24 - vendor\laravel\framework\src\Illuminate\Cookie\Middleware\EncryptCookies.php:74
+25 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+26 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:137
+27 - vendor\laravel\framework\src\Illuminate\Routing\Router.php:821
+28 - vendor\laravel\framework\src\Illuminate\Routing\Router.php:800
+29 - vendor\laravel\framework\src\Illuminate\Routing\Router.php:764
+30 - vendor\laravel\framework\src\Illuminate\Routing\Router.php:753
+31 - vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php:200
+32 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:180
+33 - vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php:21
+34 - vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull.php:31
+35 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+36 - vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php:21
+37 - vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TrimStrings.php:51
+38 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+39 - vendor\laravel\framework\src\Illuminate\Http\Middleware\ValidatePostSize.php:27
+40 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+41 - vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance.php:109
+42 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+43 - vendor\laravel\framework\src\Illuminate\Http\Middleware\HandleCors.php:61
+44 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+45 - vendor\laravel\framework\src\Illuminate\Http\Middleware\TrustProxies.php:58
+46 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+47 - vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks.php:22
+48 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+49 - vendor\laravel\framework\src\Illuminate\Http\Middleware\ValidatePathEncoding.php:26
+50 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+51 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:137
+52 - vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php:175
+53 - vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php:144
+54 - vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1220
+55 - public\index.php:17
+56 - vendor\laravel\framework\src\Illuminate\Foundation\resources\server.php:23
+
+## Request
+
+POST /settings/send-otp
+
+## Headers
+
+* **host**: 127.0.0.1:8000
+* **user-agent**: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0
+* **accept**: text/html, application/xhtml+xml
+* **accept-language**: en-US,en;q=0.9
+* **accept-encoding**: gzip, deflate, br, zstd
+* **content-type**: application/json
+* **x-requested-with**: XMLHttpRequest
+* **x-inertia**: true
+* **x-inertia-version**: adb0987a09145e0a9db78cde12237010
+* **x-xsrf-token**: eyJpdiI6IkZMcUFmZGIwdlVKanhlRDVydUtoSVE9PSIsInZhbHVlIjoieXAvQi81TU9hQXZqVjU5MFRRNkwyNEZheGtaQXdqazAya1YycW5UR0pZU1Iwb0MrcHFXa3dpSjhYSmVLV1J4dDUrUkFJaGl4SlZrOVE0Uk9OcHVXWTMxMjRDYmg2enllUFFyUmlzN2pzd3lhck1KZUMvN2dIdGwrcDZ6QWJrSm4iLCJtYWMiOiJiZTNjMjVlNGZlNTc4YWE3ZDU0OWU3MmQ5Mjg2YzM3MjZhNzY4ZjY0M2ViYWQ2MGRkOGUzMmM2ZWE4MGM1MDFmIiwidGFnIjoiIn0=
+* **content-length**: 16
+* **origin**: http://127.0.0.1:8000
+* **connection**: keep-alive
+* **referer**: http://127.0.0.1:8000/settings/profile
+* **cookie**: __stripe_mid=dd0018c3-48eb-4331-a07e-2621eb08019e9573bf; zCart Marketplace_cookie_consent=accept; _ga_KBQJP80M15=GS2.1.s1778274449$o1$g1$t1778275051$j60$l0$h0; _ga=GA1.1.265492132.1778274449; sidebar_state=true; remember_tenant_59ba36addc2b2f9401580f014c7f58ea4e30989d=eyJpdiI6Ii9GL1dDc1lnYnA5TURaODRZNE9sVWc9PSIsInZhbHVlIjoiRnlMbzJSdFQ1V1FBeDZLOWhFQ2prRnJjU082a0Y1MnJIY1lXRVVDc1hsM25oNi9yVC81NWZVRnNXYkVEVCtXdnZWanE0dzhLd3ZWSmsrM0dKaUhrTXowVGdtTWJCQ1gxWHBnKzZxNHZQemtKa1kyYnRGRVlGcVRNZEdBdzNBbk02c3hRdlFuVEV5OVdkYmZ6UTQ2dlBQck1ac01SclVZMy9YNGo2OVNUZzl4bWJSOVpyZ3Vnc09lelREMUN4dENReUJ3ZjhCTy83dmE1UTJ3SkV1QzI1ZXBsQ1FvdkRoeGhReTZyaWxieVdwbz0iLCJtYWMiOiI5NWVhNzk1OWYyZDFiMGRkMzA2OTkwMTc3MzQ2OGM0ZDY2NzYwM2JmNmM1NWNhZmY3ZWFkYWI3MzNmNmExN2MzIiwidGFnIjoiIn0%3D; _ga_SEKJ4E9T4H=GS2.1.s1780561010$o1$g1$t1780561216$j54$l0$h0$dHrzYYZcZrb-MqVRwRVYoXrXnl2jtq8jNog; _gid=GA1.1.1405540584.1780561011; XSRF-TOKEN=eyJpdiI6IkZMcUFmZGIwdlVKanhlRDVydUtoSVE9PSIsInZhbHVlIjoieXAvQi81TU9hQXZqVjU5MFRRNkwyNEZheGtaQXdqazAya1YycW5UR0pZU1Iwb0MrcHFXa3dpSjhYSmVLV1J4dDUrUkFJaGl4SlZrOVE0Uk9OcHVXWTMxMjRDYmg2enllUFFyUmlzN2pzd3lhck1KZUMvN2dIdGwrcDZ6QWJrSm4iLCJtYWMiOiJiZTNjMjVlNGZlNTc4YWE3ZDU0OWU3MmQ5Mjg2YzM3MjZhNzY4ZjY0M2ViYWQ2MGRkOGUzMmM2ZWE4MGM1MDFmIiwidGFnIjoiIn0%3D; venture_builders_session=eyJpdiI6IjE5TTM4R2xiems5SDArVnZiTTg4UHc9PSIsInZhbHVlIjoidHdCQk5QOXZvQWFUWWwwL2ErZ1VWOW1IUm1IMnRqTFNlWWJibER6RVJ5OWY1c0RjQzlXOWt6QkYzcS9EVE5LUE9GbWpGdHA4RGlSd0N6S1B6Q2NhUDhGWXV4Y3NMNTNzQnQwNEtxR0hDWXUvd3E2ejN1RFFOeVdtMkNaRWFqc0kiLCJtYWMiOiI3NzNmMjM2NmZhODA3ZTk5YWJiMTIyMjRjMzBhODRiY2I3MmRmNGVmNTIwMzVmOGY5NGY0Y2JkNjdhZTRjMDI3IiwidGFnIjoiIn0%3D
+* **sec-fetch-dest**: empty
+* **sec-fetch-mode**: cors
+* **sec-fetch-site**: same-origin
+* **priority**: u=0
+
+## Route Context
+
+controller: App\Http\Controllers\Settings\ProfileController@sendOtp
+route name: profile.send-otp
+middleware: web, auth
+
+## Route Parameters
+
+No route parameter data available.
+
+## Database Queries
+
+* mysql - select * from `sessions` where `id` = 'B4E0Lih4ZrXbE70jRgxAJYdZ016XrdYxmlIyKeZR' limit 1 (2.78 ms)
+* mysql - select * from `admins` where `id` = 1 limit 1 (0.46 ms)
+* mysql - select * from `settings` limit 1 (0.59 ms)
+* mysql - select * from `cache` where `key` in ('site_settings') (0.55 ms)
 
 
-make seeders with the current image files we have and when admin uploads new image in any page it will replace the old one and if image found old one will be deleted. So seed with the current dummy data we have.
-I will replace actual data later on. 
 
-and in every fields ther is password those can visible by eye toggle. Use swal alert there in between the admin panel please. In tsx file.
+
+
+12) Also error in contact email. ssolve that as well.
+
+

@@ -26,7 +26,7 @@ class ContactReplyMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Re: Your Inquiry to Venture Builders',
+            subject: 'Re: Your Inquiry to ' . config('app.name'),
         );
     }
 
