@@ -1,14 +1,21 @@
-This is a laravel 12, react (shadcn/ui), tailwind css, inertia setup over typescript.
-In the real-estate folder in the root directory, i have there one httml file and one demo file where is a link.
+now make the related models and middlewares for the website.
 
-Now make me the public panel of the website, it will be a real estate company portfolio website.
-It will follow the design pattern in the html file in the real-estate folder and will also conjugate with the link in the demo.txt file.
+then complete the routes and controllers works for the workflows.
 
-make a great design UI, add react hot toaster alert in a common FlasMesssage component.
+create related pages in tsx and table will be there for already added data.
+there will be popup for crud operations and image can be preview there.
 
-Setup the frontend (means the main real estate portfolio website. where will be home, blog, apartments/flats/plots, contact, privacy, terms, about and all other related pages)
+Admin can set social links, footer data, brand name (reflects in .env file also) as Settings model & miigration. contact email, phone, location, logo, brand icon all these belongs to settings, and will be visible in the frontend in the footer or header. and brand name will be visible in the tab title also. Applogo is always upload as 'logo.png' under the 'public/assets/images/' folder. and the app icon as 'icon.png' under the 'public/assets/images/' folder. so if logo or icon changes then rename the file as this name. Set it in the app.blade.php as the brand icon as well please.
 
-So complete the frontend public part (surface website) of the real estate website please.
-i want the website will run by composer run dev which is already running on as well. Sso not by npm run dev, oonly by composer run dev please.
+So:
+Property, blogs/news, about section data, facilitiess card data, featured properties, testimonials, about, terms, privacy every pages will be dynamic.
 
-Do the requests now please.
+
+In Contact us page, it will save data in the database and admin can view it in the admin panel and also will send email to admin when a user sends contact message, and mail back will be to the user when admin replies from the admin panel.
+The contact field will be OTP verified (so add otp period, it will expire after 10 minutes). So only verified emails can ssend contact message, thus it will prevent spamming as well. Do the email templates in the views/mailss folder.
+
+
+make seeders with the current image files we have and when admin uploads new image in any page it will replace the old one and if image found old one will be deleted. So seed with the current dummy data we have.
+I will replace actual data later on. 
+
+and in every fields ther is password those can visible by eye toggle. Use swal alert there in between the admin panel please. In tsx file.
