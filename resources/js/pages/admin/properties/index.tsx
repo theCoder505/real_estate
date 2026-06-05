@@ -123,7 +123,7 @@ function PropertyForm({
     };
 
     const existingImageSrc = initial?.image_path
-        ? (initial.image_path.startsWith('http') ? initial.image_path : `/${initial.image_path}`)
+        ? (initial.image_path.startsWith('http') ? initial.image_path : `${initial.image_path}`)
         : null;
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -273,7 +273,7 @@ function PropertyForm({
                             <span className="text-xs text-muted-foreground font-semibold">Existing Gallery:</span>
                             <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
                                 {existingImages.map((path, idx) => {
-                                    const src = path.startsWith('http') ? path : `/${path}`;
+                                    const src = path.startsWith('http') ? path : `${path}`;
                                     return (
                                         <div key={idx} className="relative aspect-video rounded-lg overflow-hidden border bg-zinc-50">
                                             <img src={src} alt="Gallery item" className="w-full h-full object-cover" />
@@ -406,7 +406,7 @@ export default function PropertiesIndex({ properties }: PropertiesIndexProps) {
                         <Card key={property.id} className="overflow-hidden group">
                             <div className="relative aspect-[16/10] bg-zinc-100 overflow-hidden">
                                 <img
-                                    src={property.image_path?.startsWith('http') ? property.image_path : `/${property.image_path}`}
+                                    src={property.image_path?.startsWith('http') ? property.image_path : `${property.image_path}`}
                                     alt={property.title}
                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                     onError={e => { e.currentTarget.src = 'https://placehold.co/640x400?text=No+Image'; }}
@@ -429,7 +429,7 @@ export default function PropertiesIndex({ properties }: PropertiesIndexProps) {
                                     <span className="flex items-center gap-1"><Maximize2 className="w-3.5 h-3.5" />{property.sqft} sqft</span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="font-extrabold text-orange-600">{currencySym}{Number(property.price).toLocaleString()}</span>
+                                    <span className="font-extrabold text-orange-600">{currencySym}{Number(property.price).toLocaleString('en-us')}</span>
                                     <div className="flex gap-2">
                                         <Button size="sm" variant="outline" className="h-8 w-8 p-0" onClick={() => setEditProperty(property)}>
                                             <Pencil className="w-3.5 h-3.5" />

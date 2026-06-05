@@ -207,7 +207,7 @@ export default function Index({ properties, filters }: PropertiesProps) {
                                             {property.type}
                                         </span>
                                         <div className="absolute bottom-4 left-4 bg-zinc-900/90 backdrop-blur-sm text-orange-400 font-extrabold text-lg px-4 py-1.5 rounded-xl">
-                                            {currencySym}{Number(property.price).toLocaleString()}
+                                            {Number(property.price).toLocaleString('en-us')}{currencySym}
                                         </div>
                                     </div>
 

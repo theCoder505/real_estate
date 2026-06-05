@@ -44,7 +44,7 @@ class PropertyController extends Controller
             $file = $request->file('image');
             $filename = 'property_' . time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('assets/images'), $filename);
-            $validated['image_path'] = 'assets/images/' . $filename;
+            $validated['image_path'] = '/assets/images/' . $filename;
         }
 
         $galleryPaths = [];
@@ -52,7 +52,7 @@ class PropertyController extends Controller
             foreach ($request->file('gallery_images') as $idx => $file) {
                 $filename = 'property_gallery_' . time() . '_' . $idx . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('assets/images/gallery'), $filename);
-                $galleryPaths[] = 'assets/images/gallery/' . $filename;
+                $galleryPaths[] = '/assets/images/gallery/' . $filename;
             }
         }
         $validated['images'] = $galleryPaths;
@@ -97,7 +97,7 @@ class PropertyController extends Controller
             $file = $request->file('image');
             $filename = 'property_' . time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('assets/images'), $filename);
-            $validated['image_path'] = 'assets/images/' . $filename;
+            $validated['image_path'] = '/assets/images/' . $filename;
         }
 
         // Handle gallery images removal
@@ -119,7 +119,7 @@ class PropertyController extends Controller
             foreach ($request->file('gallery_images') as $idx => $file) {
                 $filename = 'property_gallery_' . time() . '_' . $idx . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('assets/images/gallery'), $filename);
-                $currentImages[] = 'assets/images/gallery/' . $filename;
+                $currentImages[] = '/assets/images/gallery/' . $filename;
             }
         }
 

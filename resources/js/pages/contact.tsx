@@ -1,7 +1,7 @@
 import React from 'react';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import PublicLayout from '@/layouts/public-layout';
-import { MapPin, Phone, Mail, Send, CheckCircle2, MessageSquare } from 'lucide-react';
+import { MapPin, Phone, Mail, Send, CheckCircle2 } from 'lucide-react';
 
 export default function Contact() {
     const { settings } = usePage<any>().props;
@@ -213,7 +213,7 @@ export default function Contact() {
                                                     value={data.otp_code}
                                                     onChange={(e) => setData('otp_code', e.target.value)}
                                                     placeholder="Enter 6-digit code"
-                                                    className="w-full bg-white dark:bg-zinc-950 border border-zinc-250 dark:border-zinc-800 rounded-xl py-3 px-4 text-sm text-zinc-850 dark:text-zinc-200 outline-none focus:border-orange-500 transition-colors text-center tracking-widest font-mono text-xl"
+                                                    className="w-full bg-white dark:bg-zinc-950 border border-zinc-250 dark:border-zinc-800 rounded-xl py-3 px-4 text-zinc-850 dark:text-zinc-200 outline-none focus:border-orange-500 transition-colors text-center tracking-widest font-mono text-xl"
                                                 />
                                                 {errors.otp_code && <p className="text-xs text-red-500 mt-1">{errors.otp_code}</p>}
                                             </div>

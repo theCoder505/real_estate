@@ -56,22 +56,39 @@ export default function Show({ property, relatedProperties }: ShowProps) {
         return list;
     }, [property.image_path, property.images]);
 
+    const [otpSent, setOtpSent] = React.useState(false);
+
     // Form for agent contact lead
     const { data, setData, post, processing, reset, errors } = useForm({
         name: '',
         email: '',
         phone: '',
         message: `Hi, I am interested in "${property.title}" (${property.location}). Please send me detailed blueprints and price negotiations.`,
+        otp_code: '',
     });
 
     const handleFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('contact.submit'), {
-            preserveScroll: true,
-            onSuccess: () => {
-                reset('name', 'email', 'phone');
-            },
-        });
+        if (otpSent) {
+            post(route('contact.verify'), {
+                preserveScroll: true,
+                onSuccess: (page: any) => {
+                    if (!page.props.flash?.error) {
+                        setOtpSent(false);
+                        reset('name', 'email', 'phone', 'otp_code');
+                    }
+                },
+            });
+        } else {
+            post(route('contact.submit'), {
+                preserveScroll: true,
+                onSuccess: (page: any) => {
+                    if (!page.props.flash?.error) {
+                        setOtpSent(true);
+                    }
+                },
+            });
+        }
     };
 
     const brokerName = settings?.broker_name || 'Sarah Jenkins';
@@ -157,7 +174,7 @@ export default function Show({ property, relatedProperties }: ShowProps) {
                                 <div className="text-left sm:text-right shrink-0">
                                     <span className="block text-xs text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-wider">Asking Price</span>
                                     <span className="block text-2xl sm:text-3xl font-black text-orange-600 mt-1">
-                                        {currencySym}{Number(property.price).toLocaleString()}
+                                        {Number(property.price).toLocaleString('en-us')}{currencySym}
                                     </span>
                                 </div>
                             </div>
@@ -231,61 +248,103 @@ export default function Show({ property, relatedProperties }: ShowProps) {
 
                                 <h3 className="font-bold text-zinc-900 dark:text-white text-base">Request Private Tour & Specs</h3>
                                 <form onSubmit={handleFormSubmit} className="space-y-4 text-left">
-                                    <div>
-                                        <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">Your Name</label>
-                                        <input
-                                            type="text"
-                                            required
-                                            value={data.name}
-                                            onChange={(e) => setData('name', e.target.value)}
-                                            className="w-full bg-white dark:bg-zinc-950 border border-zinc-250 dark:border-zinc-800 rounded-xl py-2.5 px-3 text-sm text-zinc-850 dark:text-zinc-200 outline-none focus:border-orange-500 transition-colors"
-                                        />
-                                        {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
-                                    </div>
+                                    {!otpSent ? (
+                                        <>
+                                            <div>
+                                                <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">Your Name</label>
+                                                <input
+                                                    type="text"
+                                                    required
+                                                    value={data.name}
+                                                    onChange={(e) => setData('name', e.target.value)}
+                                                    className="w-full bg-white dark:bg-zinc-950 border border-zinc-250 dark:border-zinc-800 rounded-xl py-2.5 px-3 text-sm text-zinc-850 dark:text-zinc-200 outline-none focus:border-orange-500 transition-colors"
+                                                />
+                                                {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
+                                            </div>
 
-                                    <div>
-                                        <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">Email Address</label>
-                                        <input
-                                            type="email"
-                                            required
-                                            value={data.email}
-                                            onChange={(e) => setData('email', e.target.value)}
-                                            className="w-full bg-white dark:bg-zinc-950 border border-zinc-250 dark:border-zinc-800 rounded-xl py-2.5 px-3 text-sm text-zinc-850 dark:text-zinc-200 outline-none focus:border-orange-500 transition-colors"
-                                        />
-                                        {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
-                                    </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">Email Address</label>
+                                                <input
+                                                    type="email"
+                                                    required
+                                                    value={data.email}
+                                                    onChange={(e) => setData('email', e.target.value)}
+                                                    className="w-full bg-white dark:bg-zinc-950 border border-zinc-250 dark:border-zinc-800 rounded-xl py-2.5 px-3 text-sm text-zinc-850 dark:text-zinc-200 outline-none focus:border-orange-500 transition-colors"
+                                                />
+                                                {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
+                                            </div>
 
-                                    <div>
-                                        <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">Phone Number (Optional)</label>
-                                        <input
-                                            type="text"
-                                            value={data.phone}
-                                            onChange={(e) => setData('phone', e.target.value)}
-                                            className="w-full bg-white dark:bg-zinc-950 border border-zinc-250 dark:border-zinc-800 rounded-xl py-2.5 px-3 text-sm text-zinc-850 dark:text-zinc-200 outline-none focus:border-orange-500 transition-colors"
-                                        />
-                                        {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
-                                    </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">Phone Number (Optional)</label>
+                                                <input
+                                                    type="text"
+                                                    value={data.phone}
+                                                    onChange={(e) => setData('phone', e.target.value)}
+                                                    className="w-full bg-white dark:bg-zinc-950 border border-zinc-250 dark:border-zinc-800 rounded-xl py-2.5 px-3 text-sm text-zinc-850 dark:text-zinc-200 outline-none focus:border-orange-500 transition-colors"
+                                                />
+                                                {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
+                                            </div>
 
-                                    <div>
-                                        <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">Custom Message</label>
-                                        <textarea
-                                            required
-                                            rows={4}
-                                            value={data.message}
-                                            onChange={(e) => setData('message', e.target.value)}
-                                            className="w-full bg-white dark:bg-zinc-950 border border-zinc-250 dark:border-zinc-800 rounded-xl py-2.5 px-3 text-sm text-zinc-850 dark:text-zinc-200 outline-none focus:border-orange-500 transition-colors resize-none"
-                                        />
-                                        {errors.message && <p className="text-xs text-red-500 mt-1">{errors.message}</p>}
-                                    </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">Custom Message</label>
+                                                <textarea
+                                                    required
+                                                    rows={4}
+                                                    value={data.message}
+                                                    onChange={(e) => setData('message', e.target.value)}
+                                                    className="w-full bg-white dark:bg-zinc-950 border border-zinc-250 dark:border-zinc-800 rounded-xl py-2.5 px-3 text-sm text-zinc-850 dark:text-zinc-200 outline-none focus:border-orange-500 transition-colors resize-none"
+                                                />
+                                                {errors.message && <p className="text-xs text-red-500 mt-1">{errors.message}</p>}
+                                            </div>
 
-                                    <button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="w-full py-3 bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white font-bold rounded-xl text-sm transition-all shadow-md shadow-orange-500/10 active:scale-[0.98] flex items-center justify-center gap-1.5"
-                                    >
-                                        <MessageSquare className="w-4.5 h-4.5" />
-                                        <span>Send Request</span>
-                                    </button>
+                                            <button
+                                                type="submit"
+                                                disabled={processing}
+                                                className="w-full py-3 bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white font-bold rounded-xl text-sm transition-all shadow-md shadow-orange-500/10 active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer"
+                                            >
+                                                <MessageSquare className="w-4.5 h-4.5" />
+                                                <span>Send Request</span>
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <div className="space-y-4">
+                                            <div className="p-4 bg-orange-50 dark:bg-orange-900/20 text-orange-850 dark:text-orange-200 rounded-xl text-xs sm:text-sm">
+                                                An OTP has been sent to your email <strong>{data.email}</strong>. Please enter it below to verify your message.
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">OTP Code</label>
+                                                <input
+                                                    type="text"
+                                                    required
+                                                    maxLength={6}
+                                                    value={data.otp_code}
+                                                    onChange={(e) => setData('otp_code', e.target.value)}
+                                                    placeholder="Enter 6-digit code"
+                                                    className="w-full bg-white dark:bg-zinc-950 border border-zinc-250 dark:border-zinc-800 rounded-xl py-2.5 px-3 text-sm text-zinc-850 dark:text-zinc-200 outline-none focus:border-orange-500 transition-colors text-center tracking-widest font-mono text-lg"
+                                                />
+                                                {errors.otp_code && <p className="text-xs text-red-500 mt-1">{errors.otp_code}</p>}
+                                            </div>
+
+                                            <div className="flex gap-3">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setOtpSent(false)}
+                                                    className="flex-1 py-3 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-bold rounded-xl text-sm transition-all active:scale-[0.98] flex items-center justify-center"
+                                                >
+                                                    Cancel
+                                                </button>
+                                                <button
+                                                    type="submit"
+                                                    disabled={processing}
+                                                    className="flex-[2] py-3 bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white font-bold rounded-xl text-sm transition-all shadow-md shadow-orange-500/10 active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer"
+                                                >
+                                                    <CheckCircle2 className="w-4 h-4" />
+                                                    <span>Verify & Submit</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
                                 </form>
                             </div>
                         </div>
@@ -315,7 +374,7 @@ export default function Show({ property, relatedProperties }: ShowProps) {
                                             {related.status}
                                         </span>
                                         <div className="absolute bottom-4 left-4 bg-zinc-900/90 backdrop-blur-sm text-orange-400 font-extrabold text-lg px-4 py-1.5 rounded-xl">
-                                            {currencySym}{Number(related.price).toLocaleString()}
+                                            {currencySym}{Number(related.price).toLocaleString('en-us')}
                                         </div>
                                     </div>
 

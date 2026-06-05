@@ -346,7 +346,7 @@ export default function Home({ featuredProperties, latestNews, stats, testimonia
                                             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
 
                                             <div className="pointer-events-none absolute bottom-0 left-0 w-full p-8 text-left">
-                                                <h3 className="mb-2 text-2xl font-bold text-white">{currencySym}{Number(property.price).toLocaleString()}</h3>
+                                                <h3 className="mb-2 text-2xl font-bold text-white">{Number(property.price).toLocaleString('en-us')}{currencySym}</h3>
                                                 <p className="mb-4 line-clamp-1 text-sm font-semibold tracking-widest text-zinc-200 uppercase">
                                                     {property.title}
                                                 </p>

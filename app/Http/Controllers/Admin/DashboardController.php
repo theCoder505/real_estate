@@ -9,6 +9,7 @@ use App\Models\BlogPost;
 use App\Models\Facility;
 use App\Models\Testimonial;
 use App\Models\ContactMessage;
+use App\Models\Setting;
 
 class DashboardController extends Controller
 {
@@ -23,6 +24,7 @@ class DashboardController extends Controller
                 'messages'     => ContactMessage::where('verified', true)->count(),
                 'featured'     => Property::where('featured', true)->count(),
             ],
+            'settings' => Setting::first(),
             'recentMessages' => ContactMessage::where('verified', true)
                 ->latest()
                 ->take(5)
