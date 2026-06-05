@@ -57,7 +57,7 @@ export function AppSidebar() {
                     <SidebarMenuItem>
                         {/* Remove isActive from logo - it shouldn't show as active */}
                         <SidebarMenuButton size="lg" asChild tooltip="Dashboard">
-                            <Link href="/dashboard" prefetch>
+                            <Link href="/admin/dashboard" prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
