@@ -1,7 +1,7 @@
 import React from 'react';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import PublicLayout from '@/layouts/public-layout';
-import { MapPin, BedDouble, Bath, Square, ChevronRight, CheckCircle2, Phone, Mail, ArrowRight, MessageSquare } from 'lucide-react';
+import { MapPin, BedDouble, Bath, Square, ChevronRight, CheckCircle2, ArrowRight, MessageSquare } from 'lucide-react';
 
 interface Property {
     id: number;
@@ -14,6 +14,7 @@ interface Property {
     baths: number;
     sqft: number;
     image_path: string;
+    images?: string[];
     featured: boolean;
     features: string[];
     status: string;
@@ -25,6 +26,36 @@ interface ShowProps {
 }
 
 export default function Show({ property, relatedProperties }: ShowProps) {
+    const { settings } = usePage<any>().props;
+
+    // State for image gallery
+    const [activeImage, setActiveImage] = React.useState(
+        property.image_path?.startsWith('http') ? property.image_path : `${property.image_path}`
+    );
+
+    React.useEffect(() => {
+        setActiveImage(property.image_path?.startsWith('http') ? property.image_path : `${property.image_path}`);
+    }, [property.image_path]);
+
+    const allImages = React.useMemo(() => {
+        const list: string[] = [];
+        if (property.image_path) {
+            const main = property.image_path.startsWith('http') ? property.image_path : `${property.image_path}`;
+            list.push(main);
+        }
+        if (property.images && Array.isArray(property.images)) {
+            property.images.forEach((img: string) => {
+                if (img) {
+                    const normalized = img.startsWith('http') ? img : `${img}`;
+                    if (!list.includes(normalized)) {
+                        list.push(normalized);
+                    }
+                }
+            });
+        }
+        return list;
+    }, [property.image_path, property.images]);
+
     // Form for agent contact lead
     const { data, setData, post, processing, reset, errors } = useForm({
         name: '',
@@ -42,6 +73,15 @@ export default function Show({ property, relatedProperties }: ShowProps) {
             },
         });
     };
+
+    const brokerName = settings?.broker_name || 'Sarah Jenkins';
+    const brokerImageSrc = settings?.broker_image_path
+        ? settings.broker_image_path.startsWith('http')
+            ? settings.broker_image_path
+            : `/${settings.broker_image_path}`
+        : 'https://preview.colorlib.com/theme/hus/img/testmonial/author.png';
+
+    const currencySym = settings?.currency_symbol || '$';
 
     return (
         <PublicLayout>
@@ -63,23 +103,47 @@ export default function Show({ property, relatedProperties }: ShowProps) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                         {/* Left: Property Overview & Specs */}
-                        <div className="lg:col-span-8 space-y-8">
+                        <div className="lg:col-span-8 space-y-6">
                             {/* Main image */}
                             <div className="relative aspect-video rounded-3xl overflow-hidden shadow-md border border-zinc-200 dark:border-zinc-800 bg-zinc-100">
                                 <img
-                                    src={property.image_path}
+                                    src={activeImage}
                                     alt={property.title}
-                                    className="object-cover w-full h-full"
+                                    className="object-cover w-full h-full transition-all duration-300"
                                 />
                                 <span className="absolute top-6 left-6 bg-orange-600 text-white text-xs font-extrabold px-4 py-2 rounded-xl uppercase tracking-wider shadow-lg">
                                     {property.status}
                                 </span>
                             </div>
 
+                            {/* Additional image thumbnails */}
+                            {allImages.length > 1 && (
+                                <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700">
+                                    {allImages.map((img, idx) => (
+                                        <button
+                                            key={idx}
+                                            type="button"
+                                            onClick={() => setActiveImage(img)}
+                                            className={`relative h-20 w-32 shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-200 ${
+                                                activeImage === img
+                                                    ? 'border-orange-500 scale-95 ring-2 ring-orange-500/20'
+                                                    : 'border-transparent hover:border-zinc-300'
+                                            }`}
+                                        >
+                                            <img
+                                                src={img}
+                                                alt={`Thumbnail ${idx + 1}`}
+                                                className="h-full w-full object-cover"
+                                            />
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+
                             {/* Title, Location & Price */}
-                            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pt-4">
                                 <div className="space-y-2">
-                                    <span className="inline-block bg-orange-150 text-orange-600 dark:bg-orange-950/30 dark:text-orange-400 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-lg">
+                                    <span className="inline-block bg-orange-100 text-orange-600 dark:bg-orange-950/30 dark:text-orange-400 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-lg">
                                         {property.type}
                                     </span>
                                     <h1 className="text-2xl sm:text-3xl font-black text-zinc-900 dark:text-white leading-tight">
@@ -93,7 +157,7 @@ export default function Show({ property, relatedProperties }: ShowProps) {
                                 <div className="text-left sm:text-right shrink-0">
                                     <span className="block text-xs text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-wider">Asking Price</span>
                                     <span className="block text-2xl sm:text-3xl font-black text-orange-600 mt-1">
-                                        ${property.price.toLocaleString()}
+                                        {currencySym}{Number(property.price).toLocaleString()}
                                     </span>
                                 </div>
                             </div>
@@ -157,11 +221,11 @@ export default function Show({ property, relatedProperties }: ShowProps) {
                             <div className="bg-zinc-50 dark:bg-zinc-900  p-6 sm:p-8 rounded-3xl space-y-6">
                                 <div className="text-center pb-4 border-b border-zinc-200 dark:border-zinc-800 space-y-4">
                                     <div className="w-16 h-16 rounded-full overflow-hidden bg-zinc-200 mx-auto shadow border-2 border-white dark:border-zinc-800">
-                                        <img src="https://preview.colorlib.com/theme/hus/img/testmonial/author.png" alt="Sarah Jenkins" className="w-full h-full object-cover" />
+                                        <img src={brokerImageSrc} alt={brokerName} className="w-full h-full object-cover" />
                                     </div>
                                     <div>
-                                        <h4 className="font-extrabold text-zinc-900 dark:text-white">Sarah Jenkins</h4>
-                                        <span className="block text-xs text-zinc-400 font-bold uppercase tracking-wider mt-0.5">Venture Builders Broker</span>
+                                        <h4 className="font-extrabold text-zinc-900 dark:text-white">{brokerName}</h4>
+                                        <span className="block text-xs text-zinc-400 font-bold uppercase tracking-wider mt-0.5">{settings?.company_name || 'Venture Builders'} Broker</span>
                                     </div>
                                 </div>
 
@@ -242,7 +306,7 @@ export default function Show({ property, relatedProperties }: ShowProps) {
                                 >
                                     <div className="relative aspect-[16/10] overflow-hidden bg-zinc-100">
                                         <img
-                                            src={related.image_path}
+                                            src={related.image_path?.startsWith('http') ? related.image_path : `${related.image_path}`}
                                             alt={related.title}
                                             className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
                                             loading="lazy"
@@ -251,7 +315,7 @@ export default function Show({ property, relatedProperties }: ShowProps) {
                                             {related.status}
                                         </span>
                                         <div className="absolute bottom-4 left-4 bg-zinc-900/90 backdrop-blur-sm text-orange-400 font-extrabold text-lg px-4 py-1.5 rounded-xl">
-                                            ${related.price.toLocaleString()}
+                                            {currencySym}{Number(related.price).toLocaleString()}
                                         </div>
                                     </div>
 
@@ -259,7 +323,7 @@ export default function Show({ property, relatedProperties }: ShowProps) {
                                         <h3 className="font-extrabold text-lg text-zinc-900 dark:text-white line-clamp-1 group-hover:text-orange-600 transition-colors">
                                             {related.title}
                                         </h3>
-                                        <p className="flex items-center gap-1 text-sm text-zinc-500">
+                                        <p className="flex items-center gap-1 text-sm text-zinc-550">
                                             <MapPin className="w-4 h-4 text-orange-500 shrink-0" />
                                             <span className="line-clamp-1">{related.location}</span>
                                         </p>

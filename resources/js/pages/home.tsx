@@ -32,9 +32,20 @@ interface BlogPost {
     image_path: string;
 }
 
+interface Testimonial {
+    id: number;
+    name: string;
+    role: string;
+    content: string;
+    image_path: string;
+    rating?: number;
+}
+
 interface HomeProps {
     featuredProperties: Property[];
     latestNews: BlogPost[];
+    testimonials: Testimonial[];
+    settings: any;
     stats: {
         experience: number;
         buildings: number;
@@ -42,7 +53,7 @@ interface HomeProps {
     };
 }
 
-export default function Home({ featuredProperties, latestNews, stats }: HomeProps) {
+export default function Home({ featuredProperties, latestNews, stats, testimonials, settings }: HomeProps) {
     const [searchQuery, setSearchQuery] = useState('');
     const [propertyType, setPropertyType] = useState('all');
 
@@ -56,6 +67,19 @@ export default function Home({ featuredProperties, latestNews, stats }: HomeProp
         if (emblaApi) emblaApi.scrollNext();
     }, [emblaApi]);
 
+    // Slider for testimonials
+    const [testimonialEmblaRef, testimonialEmblaApi] = useEmblaCarousel({ loop: true, align: 'start' }, [
+        Autoplay({ delay: 6000, stopOnInteraction: true })
+    ]);
+
+    const scrollTestimonialPrev = useCallback(() => {
+        if (testimonialEmblaApi) testimonialEmblaApi.scrollPrev();
+    }, [testimonialEmblaApi]);
+
+    const scrollTestimonialNext = useCallback(() => {
+        if (testimonialEmblaApi) testimonialEmblaApi.scrollNext();
+    }, [testimonialEmblaApi]);
+
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         router.get(route('properties.index'), {
@@ -63,6 +87,8 @@ export default function Home({ featuredProperties, latestNews, stats }: HomeProp
             type: propertyType,
         });
     };
+
+    const currencySym = settings?.currency_symbol || '$';
 
     return (
         <PublicLayout>
@@ -225,11 +251,11 @@ export default function Home({ featuredProperties, latestNews, stats }: HomeProp
                             <div className="border-zinc-150 flex gap-12 border-t pt-6 dark:border-zinc-800">
                                 <div className="text-center sm:text-left">
                                     <span className="block text-3xl font-black text-zinc-900 dark:text-white">{stats.buildings}+</span>
-                                    <span className="text-xs font-bold tracking-wide text-zinc-500 uppercase">Buildings Completed</span>
+                                    <span className="text-xs font-bold tracking-wide text-zinc-550 uppercase">Buildings Completed</span>
                                 </div>
                                 <div className="text-center sm:text-left">
                                     <span className="block text-3xl font-black text-zinc-900 dark:text-white">{stats.clients}+</span>
-                                    <span className="text-xs font-bold tracking-wide text-zinc-500 uppercase">Happy Clients</span>
+                                    <span className="text-xs font-bold tracking-wide text-zinc-550 uppercase">Happy Clients</span>
                                 </div>
                             </div>
                         </div>
@@ -312,7 +338,7 @@ export default function Home({ featuredProperties, latestNews, stats }: HomeProp
                                     <div key={property.id} className="min-w-0 flex-[0_0_100%] pl-[2px] md:flex-[0_0_50%] lg:flex-[0_0_33.333333%]">
                                         <article className="group relative aspect-[4/3] cursor-pointer overflow-hidden">
                                             <img
-                                                src={property.image_path}
+                                                src={property.image_path?.startsWith('http') ? property.image_path : `${property.image_path}`}
                                                 alt={property.title}
                                                 className="h-full w-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105 group-hover:opacity-100"
                                                 loading="lazy"
@@ -320,7 +346,7 @@ export default function Home({ featuredProperties, latestNews, stats }: HomeProp
                                             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
 
                                             <div className="pointer-events-none absolute bottom-0 left-0 w-full p-8 text-left">
-                                                <h3 className="mb-2 text-2xl font-bold text-white">${property.price.toLocaleString()}</h3>
+                                                <h3 className="mb-2 text-2xl font-bold text-white">{currencySym}{Number(property.price).toLocaleString()}</h3>
                                                 <p className="mb-4 line-clamp-1 text-sm font-semibold tracking-widest text-zinc-200 uppercase">
                                                     {property.title}
                                                 </p>
@@ -380,71 +406,80 @@ export default function Home({ featuredProperties, latestNews, stats }: HomeProp
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-                        {/* Testimonial 1 */}
-                        <div className="relative space-y-6 rounded-3xl bg-zinc-50 p-8 dark:bg-zinc-900">
-                            <Quote className="absolute top-8 right-8 h-10 w-10 text-orange-500/20" />
-                            <p className="text-sm leading-relaxed text-zinc-600 italic dark:text-zinc-300">
-                                "We bought our 3-bedroom flat in Chicago. The Venture Builders team walked us through the paperwork, connection of
-                                smart systems, and delivered exactly what was promised. 100% recommended!"
-                            </p>
-                            <div className="flex items-center gap-3">
-                                <div className="h-12 w-12 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
-                                    <img
-                                        src="https://preview.colorlib.com/theme/hus/img/testmonial/author.png"
-                                        alt="Margaret Lawson"
-                                        className="h-full w-full object-cover"
-                                    />
-                                </div>
-                                <div>
-                                    <h4 className="text-sm font-extrabold text-zinc-950 dark:text-white">Margaret Lawson</h4>
-                                    <span className="text-xs text-zinc-400">Creative Director</span>
+                    {testimonials.length > 0 ? (
+                        <div className="group/testimonial-slider relative">
+                            <div className="overflow-hidden" ref={testimonialEmblaRef}>
+                                <div className="-ml-4 flex gap-4">
+                                    {testimonials.map((t) => (
+                                        <div key={t.id} className="min-w-0 flex-[0_0_100%] pl-4 md:flex-[0_0_50%] lg:flex-[0_0_33.333333%]">
+                                            <div className="relative space-y-6 rounded-3xl bg-zinc-50 p-8 dark:bg-zinc-900 h-full flex flex-col justify-between">
+                                                <Quote className="absolute top-8 right-8 h-10 w-10 text-orange-500/20" />
+                                                <p className="text-sm leading-relaxed text-zinc-650 italic dark:text-zinc-300 flex-grow">
+                                                    "{t.content}"
+                                                </p>
+                                                <div className="flex items-center gap-3 pt-4 border-t border-zinc-205/60 dark:border-zinc-800/60">
+                                                    <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
+                                                        {t.image_path ? (
+                                                            <img
+                                                                src={t.image_path.startsWith('http') ? t.image_path : `${t.image_path}`}
+                                                                alt={t.name}
+                                                                className="h-full w-full object-cover"
+                                                            />
+                                                        ) : (
+                                                            <div className="flex h-full w-full items-center justify-center bg-orange-600 text-sm font-bold text-white uppercase">
+                                                                {t.name.substring(0, 2)}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="text-sm font-extrabold text-zinc-950 dark:text-white">{t.name}</h4>
+                                                        <span className="text-xs text-zinc-405">{t.role}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Testimonial 2 */}
-                        <div className="relative space-y-6 rounded-3xl bg-zinc-50 p-8 dark:bg-zinc-900">
-                            <Quote className="absolute top-8 right-8 h-10 w-10 text-orange-500/20" />
-                            <p className="text-sm leading-relaxed text-zinc-600 italic dark:text-zinc-300">
-                                "The luxury penthouse in Miami Beach is a dream come true. The panoramic ocean views and wraps-around terrace are
-                                stunning. Excellent materials, superb acoustic insulation, and state of the art finishes."
-                            </p>
-                            <div className="flex items-center gap-3">
-                                <div className="h-12 w-12 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
-                                    <img
-                                        src="https://preview.colorlib.com/theme/hus/img/testmonial/author2.png"
-                                        alt="Donald Sinclair"
-                                        className="h-full w-full object-cover"
-                                    />
-                                </div>
-                                <div>
-                                    <h4 className="text-sm font-extrabold text-zinc-950 dark:text-white">Donald Sinclair</h4>
-                                    <span className="text-xs text-zinc-400">Architectural Investor</span>
-                                </div>
-                            </div>
+                            {/* Testimonial arrows */}
+                            {testimonials.length > 1 && (
+                                <>
+                                    <button
+                                        onClick={scrollTestimonialPrev}
+                                        className="absolute top-1/2 left-4 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-zinc-900 opacity-0 shadow-xl backdrop-blur-sm transition-all duration-300 group-hover/testimonial-slider:opacity-100 hover:bg-white focus:outline-none md:-left-6"
+                                        aria-label="Previous testimonial"
+                                    >
+                                        <ChevronLeft className="h-6 w-6" />
+                                    </button>
+                                    <button
+                                        onClick={scrollTestimonialNext}
+                                        className="absolute top-1/2 right-4 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-zinc-900 opacity-0 shadow-xl backdrop-blur-sm transition-all duration-300 group-hover/testimonial-slider:opacity-100 hover:bg-white focus:outline-none md:-right-6"
+                                        aria-label="Next testimonial"
+                                    >
+                                        <ChevronRight className="h-6 w-6" />
+                                    </button>
+                                </>
+                            )}
                         </div>
+                    ) : (
+                        <div className="text-center py-12 text-zinc-400">
+                            <Quote className="mx-auto mb-3 h-12 w-12 opacity-30" />
+                            <p>No testimonials available.</p>
+                        </div>
+                    )}
 
-                        {/* Testimonial 3 */}
-                        <div className="relative space-y-6 rounded-3xl bg-zinc-50 p-8 dark:bg-zinc-900">
-                            <Quote className="absolute top-8 right-8 h-10 w-10 text-orange-500/20" />
-                            <p className="text-sm leading-relaxed text-zinc-600 italic dark:text-zinc-300">
-                                "Venture Builders made land plot acquisition simple. The corner lot in Austin came with all utility connections
-                                pre-established. Paved road access and papers ready. Very professional service."
-                            </p>
-                            <div className="flex items-center gap-3">
-                                <div className="h-12 w-12 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
-                                    <div className="flex h-full w-full items-center justify-center bg-orange-600 text-sm font-bold text-white">
-                                        RH
-                                    </div>
-                                </div>
-                                <div>
-                                    <h4 className="text-sm font-extrabold text-zinc-950 dark:text-white">Robert Harris</h4>
-                                    <span className="text-xs text-zinc-400">Private Home Builder</span>
-                                </div>
-                            </div>
+                    {testimonials.length > 0 && (
+                        <div className="mt-12 text-center">
+                            <Link
+                                href={route('testimonials')}
+                                className="inline-flex items-center gap-1.5 font-bold text-orange-500 hover:text-orange-600 transition-colors"
+                            >
+                                <span>View All Client Reviews</span>
+                                <ArrowRight className="h-4 w-4" />
+                            </Link>
                         </div>
-                    </div>
+                    )}
                 </div>
             </section>
 
@@ -469,7 +504,7 @@ export default function Home({ featuredProperties, latestNews, stats }: HomeProp
                             </div>
                             <div className="text-left">
                                 <span className="block text-xs font-bold tracking-wider text-orange-200 uppercase">Say Hello</span>
-                                <span className="block text-lg font-black tracking-tight">+3232432423</span>
+                                <span className="block text-lg font-black tracking-tight">{settings?.contact_phone || '+001 325 589'}</span>
                             </div>
                         </div>
                         <Link
@@ -502,7 +537,7 @@ export default function Home({ featuredProperties, latestNews, stats }: HomeProp
                             >
                                 <div className="bg-zinc-150 relative aspect-[16/9] shrink-0 overflow-hidden">
                                     <img
-                                        src={post.image_path}
+                                        src={post.image_path?.startsWith('http') ? post.image_path : `${post.image_path}`}
                                         alt={post.title}
                                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-103"
                                         loading="lazy"
@@ -528,7 +563,7 @@ export default function Home({ featuredProperties, latestNews, stats }: HomeProp
                                         <h3 className="line-clamp-2 text-lg leading-tight font-extrabold text-zinc-900 transition-colors group-hover:text-orange-600 sm:text-xl dark:text-white">
                                             {post.title}
                                         </h3>
-                                        <p className="line-clamp-3 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{post.excerpt}</p>
+                                        <p className="line-clamp-3 text-sm leading-relaxed text-zinc-550 dark:text-zinc-400">{post.excerpt}</p>
                                     </div>
 
                                     <Link

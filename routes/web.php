@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\FacilityController;
 use App\Http\Controllers\Admin\PropertyController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\TestimonialController;
+use App\Http\Controllers\Admin\TeamMemberController;
+use App\Http\Controllers\Admin\NewsletterSubscriberController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PublicPageController;
 use App\Http\Controllers\ContactController;
@@ -27,6 +29,7 @@ Route::post('/contact/verify', [ContactController::class, 'verifyOtp'])->middlew
 Route::post('/subscribe', [PublicPageController::class, 'subscribe'])->name('subscribe');
 Route::get('/privacy', [PublicPageController::class, 'privacy'])->name('privacy');
 Route::get('/terms', [PublicPageController::class, 'terms'])->name('terms');
+Route::get('/testimonials', [PublicPageController::class, 'testimonials'])->name('testimonials');
 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -39,10 +42,14 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::resource('blog', BlogPostController::class)->except(['create', 'show', 'edit']);
     Route::resource('facilities', FacilityController::class)->except(['create', 'show', 'edit']);
     Route::resource('testimonials', TestimonialController::class)->except(['create', 'show', 'edit']);
+    Route::resource('team-members', TeamMemberController::class)->except(['create', 'show', 'edit']);
     
     Route::get('contact-messages', [ContactMessageController::class, 'index'])->name('contact.index');
     Route::post('contact-messages/{contactMessage}/reply', [ContactMessageController::class, 'reply'])->name('contact.reply');
     Route::delete('contact-messages/{contactMessage}', [ContactMessageController::class, 'destroy'])->name('contact.destroy');
+
+    Route::get('newsletter-subscribers', [NewsletterSubscriberController::class, 'index'])->name('newsletter.index');
+    Route::delete('newsletter-subscribers/{subscriber}', [NewsletterSubscriberController::class, 'destroy'])->name('newsletter.destroy');
 });
 
 

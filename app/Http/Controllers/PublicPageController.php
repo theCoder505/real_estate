@@ -9,6 +9,8 @@ use App\Models\BlogPost;
 use App\Models\Facility;
 use App\Models\Testimonial;
 use App\Models\Setting;
+use App\Models\TeamMember;
+use App\Models\NewsletterSubscriber;
 
 class PublicPageController extends Controller
 {
@@ -16,7 +18,7 @@ class PublicPageController extends Controller
     {
         $featuredProperties = Property::where('featured', true)->get();
         $latestNews = BlogPost::orderBy('published_at', 'desc')->take(2)->get();
-        $testimonials = Testimonial::all();
+        $testimonials = Testimonial::take(10)->get();
         $settings = Setting::first();
 
         return Inertia::render('home', [
@@ -25,21 +27,26 @@ class PublicPageController extends Controller
             'testimonials' => $testimonials,
             'settings' => $settings,
             'stats' => [
-                'experience' => 10,
-                'buildings' => 120,
-                'clients' => 500,
+                'experience' => $settings->years_of_experience ?? 10,
+                'buildings' => $settings->building_finished ?? 120,
+                'clients' => $settings->satisfied_clients ?? 500,
             ]
         ]);
     }
 
     public function about()
     {
+        $settings = Setting::first();
+        $team = TeamMember::all();
+
         return Inertia::render('about', [
+            'team' => $team,
+            'settings' => $settings,
             'stats' => [
-                'experience' => 10,
-                'buildings' => 120,
-                'clients' => 500,
-                'agents' => 15
+                'experience' => $settings->years_of_experience ?? 10,
+                'buildings' => $settings->building_finished ?? 120,
+                'clients' => $settings->satisfied_clients ?? 500,
+                'agents' => $settings->expert_agents ?? 15,
             ]
         ]);
     }
@@ -128,16 +135,30 @@ class PublicPageController extends Controller
         return Inertia::render('contact');
     }
 
-
-
     public function subscribe(Request $request)
     {
         $request->validate([
             'email' => 'required|email|max:255',
         ]);
 
-        // Simulating newsletter list subscription:
+        $exists = NewsletterSubscriber::where('email', $request->email)->exists();
+        if ($exists) {
+            return redirect()->back()->withErrors(['email' => 'You are already subscribed to our newsletter!']);
+        }
+
+        NewsletterSubscriber::create([
+            'email' => $request->email
+        ]);
+
         return redirect()->back()->with('success', 'Subscribed successfully! Thank you for joining our newsletter.');
+    }
+
+    public function testimonials()
+    {
+        $testimonials = Testimonial::latest()->get();
+        return Inertia::render('testimonials', [
+            'testimonials' => $testimonials
+        ]);
     }
 
     public function privacy()

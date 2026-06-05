@@ -20,6 +20,7 @@ class Property extends Model
         'baths',
         'sqft',
         'image_path',
+        'images',
         'featured',
         'status',
         'features',
@@ -28,6 +29,7 @@ class Property extends Model
     protected $casts = [
         'featured' => 'boolean',
         'features' => 'array',
+        'images' => 'array',
         'price' => 'decimal:2',
         'baths' => 'decimal:1',
     ];

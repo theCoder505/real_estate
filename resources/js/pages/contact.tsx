@@ -65,9 +65,16 @@ export default function Contact() {
 
 
             {/* 2. Map Placeholder */}
-            <section className="bg-zinc-100 dark:bg-zinc-900 border-t border-zinc-200/50 dark:border-zinc-850 h-[600px] w-full relative transition-colors">
+            <section className="bg-zinc-100 dark:bg-zinc-900 border-t border-zinc-200/50 dark:border-zinc-850 h-[600px] w-full relative transition-colors google-map-container">
                 {settings?.google_map_iframe ? (
-                    <div className="w-full h-full grayscale dark:grayscale-0 dark:invert-0 opacity-100 [&>iframe]:w-full [&>iframe]:h-full" dangerouslySetInnerHTML={{ __html: settings.google_map_iframe }} />
+                    settings.google_map_iframe.trim().includes('<iframe') ? (
+                        <div className="w-full h-full grayscale dark:grayscale-0 dark:invert-0 opacity-100" dangerouslySetInnerHTML={{ __html: settings.google_map_iframe }} />
+                    ) : (
+                        <iframe
+                            className="w-full h-full grayscale dark:grayscale-0 dark:invert-0 opacity-100"
+                            src={settings.google_map_iframe}
+                            loading="lazy"></iframe>
+                    )
                 ) : (
                     <iframe
                         className="w-full h-full grayscale dark:grayscale-0 dark:invert-0 opacity-100"

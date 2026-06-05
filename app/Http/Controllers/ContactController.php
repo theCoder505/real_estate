@@ -9,6 +9,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ContactOtpMail;
 
+use Illuminate\Support\Facades\Log;
+
 class ContactController extends Controller
 {
     public function submit(Request $request)
@@ -34,8 +36,16 @@ class ContactController extends Controller
             'verified' => false,
         ]);
 
-        // Send OTP via email
-        Mail::to($request->email)->send(new ContactOtpMail($otp));
+        try {
+            // Send OTP via email
+            Mail::to($request->email)->send(new ContactOtpMail($otp));
+        } catch (\Exception $e) {
+            Log::error('Failed to send contact OTP email: ' . $e->getMessage());
+            $contactMessage->delete();
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['email' => 'Failed to send OTP to your email. Please verify if the email is correct.']);
+        }
 
         return redirect()->back()
             ->with('success', 'An OTP has been sent to your email. Please verify to complete your submission.')

@@ -1,9 +1,19 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
 import PublicLayout from '@/layouts/public-layout';
-import { Building2, Heart, Shield, Sparkles, Target, Users } from 'lucide-react';
+import { Building2, Heart, Shield, Sparkles, Target, Users, UserCircle2 } from 'lucide-react';
+
+interface TeamMember {
+    id: number;
+    name: string;
+    role: string;
+    bio: string;
+    image_path: string;
+}
 
 interface AboutProps {
+    team: TeamMember[];
+    settings: any;
     stats: {
         experience: number;
         buildings: number;
@@ -12,7 +22,7 @@ interface AboutProps {
     };
 }
 
-export default function About({ stats }: AboutProps) {
+export default function About({ team, settings, stats }: AboutProps) {
     const coreValues = [
         {
             icon: Shield,
@@ -31,30 +41,11 @@ export default function About({ stats }: AboutProps) {
         }
     ];
 
-    const team = [
-        {
-            name: 'Sarah Jenkins',
-            role: 'Founder & CEO',
-            bio: 'Sarah has over 15 years of experience in property acquisition and building development across metropolitan areas.',
-            image: 'https://preview.colorlib.com/theme/hus/img/testmonial/author.png'
-        },
-        {
-            name: 'David Miller',
-            role: 'Head of Engineering & Systems',
-            bio: 'David leads our construction inspections and smart system integrations, ensuring top-tier safety and technology metrics.',
-            image: 'https://preview.colorlib.com/theme/hus/img/testmonial/author2.png'
-        },
-        {
-            name: 'Margaret Lawson',
-            role: 'Brokerage & Public Relations',
-            bio: 'Margaret is our leading contact for client consultations, guiding first-time home buyers through secure transactions.',
-            image: 'https://preview.colorlib.com/theme/hus/img/testmonial/author2.png'
-        }
-    ];
+    const brandName = settings?.company_name || 'Venture Builders';
 
     return (
         <PublicLayout>
-            <Head title="About Us - Venture Builders" />
+            <Head title={`About Us - ${brandName}`} />
 
             {/* 1. Header Banner */}
             <section className="bg-zinc-900 text-white py-20 relative overflow-hidden">
@@ -63,7 +54,7 @@ export default function About({ stats }: AboutProps) {
                 />
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
                     <span className="text-orange-500 font-extrabold text-sm uppercase tracking-wider">Our Story</span>
-                    <h1 className="text-4xl sm:text-5xl font-black tracking-tight">About Venture Builders</h1>
+                    <h1 className="text-4xl sm:text-5xl font-black tracking-tight">About {brandName}</h1>
                     <p className="text-zinc-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
                         Dedicated to designing premium housing, secure gated flats, and high-value residential plots.
                     </p>
@@ -75,13 +66,21 @@ export default function About({ stats }: AboutProps) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div className="space-y-6">
-                            <h2 className="text-3xl font-extrabold text-zinc-900 dark:text-white">Our Journey Since 2016</h2>
-                            <p className="text-zinc-600 dark:text-zinc-350 leading-relaxed text-sm sm:text-base">
-                                Venture Builders began as a boutique land scouting group in Austin, Texas. Our commitment to securing plots with pre-verified land registration titles quickly built market trust. Recognizing a lack of quality control in affordable suburban apartments, we expanded into architect-led construction in 2018.
-                            </p>
-                            <p className="text-zinc-600 dark:text-zinc-350 leading-relaxed text-sm sm:text-base">
-                                Today, we manage a diversified real estate portfolio, connecting hundreds of happy families with comfortable homes. Our design guidelines focus on eco-friendly water collection, modern smart lighting, and robust concrete structures.
-                            </p>
+                            <h2 className="text-3xl font-extrabold text-zinc-900 dark:text-white">Our Journey</h2>
+                            {settings?.our_journey ? (
+                                <p className="text-zinc-650 dark:text-zinc-400 leading-relaxed text-sm sm:text-base whitespace-pre-line">
+                                    {settings.our_journey}
+                                </p>
+                            ) : (
+                                <>
+                                    <p className="text-zinc-600 dark:text-zinc-350 leading-relaxed text-sm sm:text-base">
+                                        Venture Builders began as a boutique land scouting group in Austin, Texas. Our commitment to securing plots with pre-verified land registration titles quickly built market trust. Recognizing a lack of quality control in affordable suburban apartments, we expanded into architect-led construction in 2018.
+                                    </p>
+                                    <p className="text-zinc-600 dark:text-zinc-350 leading-relaxed text-sm sm:text-base">
+                                        Today, we manage a diversified real estate portfolio, connecting hundreds of happy families with comfortable homes. Our design guidelines focus on eco-friendly water collection, modern smart lighting, and robust concrete structures.
+                                    </p>
+                                </>
+                            )}
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="bg-zinc-50 dark:bg-zinc-900 p-6 rounded-3xl text-center space-y-1.5 border border-zinc-200/55 dark:border-zinc-850">
@@ -110,8 +109,8 @@ export default function About({ stats }: AboutProps) {
                                 <Target className="w-6 h-6" />
                             </div>
                             <h3 className="text-xl font-bold text-zinc-900 dark:text-white">Our Mission</h3>
-                            <p className="text-sm text-zinc-650 dark:text-zinc-400 leading-relaxed">
-                                To develop residential and commercial architectures that combine absolute safety, custom technological ease, and environmental sustainability, ensuring clients acquire high-growth building assets.
+                            <p className="text-sm text-zinc-650 dark:text-zinc-400 leading-relaxed whitespace-pre-line">
+                                {settings?.our_mission || "To develop residential and commercial architectures that combine absolute safety, custom technological ease, and environmental sustainability, ensuring clients acquire high-growth building assets."}
                             </p>
                         </div>
                         <div className="bg-zinc-50 dark:bg-zinc-900 p-8 rounded-3xl  space-y-4">
@@ -119,8 +118,8 @@ export default function About({ stats }: AboutProps) {
                                 <Building2 className="w-6 h-6" />
                             </div>
                             <h3 className="text-xl font-bold text-zinc-900 dark:text-white">Our Vision</h3>
-                            <p className="text-sm text-zinc-650 dark:text-zinc-400 leading-relaxed">
-                                To establish Venture Builders as a global hallmark of transparent property transactions and high-fidelity constructions, making premium smart-home designs standard.
+                            <p className="text-sm text-zinc-650 dark:text-zinc-400 leading-relaxed whitespace-pre-line">
+                                {settings?.our_vision || "To establish Venture Builders as a global hallmark of transparent property transactions and high-fidelity constructions, making premium smart-home designs standard."}
                             </p>
                         </div>
                     </div>
@@ -133,7 +132,7 @@ export default function About({ stats }: AboutProps) {
                     <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
                         <span className="text-orange-600 font-extrabold text-sm uppercase tracking-wider">Guidelines</span>
                         <h2 className="text-3xl font-extrabold text-zinc-900 dark:text-white">Our Core Values</h2>
-                        <p className="text-zinc-500 text-sm">Our operations are anchored on these primary benchmarks.</p>
+                        <p className="text-zinc-550 text-sm">Our operations are anchored on these primary benchmarks.</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -154,32 +153,47 @@ export default function About({ stats }: AboutProps) {
             </section>
 
             {/* 4. Team Members */}
-            <section className="py-20 bg-white dark:bg-zinc-950 transition-colors duration-300">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-                        <span className="text-orange-600 font-extrabold text-sm uppercase tracking-wider">Expert Team</span>
-                        <h2 className="text-3xl font-extrabold text-zinc-900 dark:text-white">Meet Our Leaders</h2>
-                        <p className="text-zinc-500 text-sm">Dedicated real estate developers guiding your buying journey.</p>
-                    </div>
+            {team.length > 0 && (
+                <section className="py-20 bg-white dark:bg-zinc-950 transition-colors duration-300">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
+                            <span className="text-orange-600 font-extrabold text-sm uppercase tracking-wider">Expert Team</span>
+                            <h2 className="text-3xl font-extrabold text-zinc-900 dark:text-white">Meet Our Leaders</h2>
+                            <p className="text-zinc-550 text-sm">Dedicated real estate developers guiding your buying journey.</p>
+                        </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                        {team.map((member, idx) => (
-                            <div key={idx} className="bg-zinc-50 dark:bg-zinc-900 rounded-3xl overflow-hidden  flex flex-col items-center p-6 text-center space-y-4 group">
-                                <div className="w-24 h-24 rounded-full overflow-hidden bg-zinc-200 border-4 border-white dark:border-zinc-800 shadow-md group-hover:scale-105 transition-transform duration-300">
-                                    <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
-                                </div>
-                                <div className="space-y-1">
-                                    <h3 className="font-extrabold text-lg text-zinc-900 dark:text-white">{member.name}</h3>
-                                    <span className="block text-xs text-orange-600 font-bold uppercase tracking-wider">{member.role}</span>
-                                </div>
-                                <p className="text-xs sm:text-sm text-zinc-550 dark:text-zinc-400 leading-relaxed">
-                                    {member.bio}
-                                </p>
-                            </div>
-                        ))}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                            {team.map((member) => {
+                                const imgSrc = member.image_path
+                                    ? member.image_path.startsWith('http')
+                                        ? member.image_path
+                                        : `/${member.image_path}`
+                                    : null;
+                                return (
+                                    <div key={member.id} className="bg-zinc-50 dark:bg-zinc-900 rounded-3xl overflow-hidden  flex flex-col items-center p-6 text-center space-y-4 group">
+                                        <div className="w-24 h-24 rounded-full overflow-hidden bg-zinc-200 border-4 border-white dark:border-zinc-800 shadow-md group-hover:scale-105 transition-transform duration-300">
+                                            {imgSrc ? (
+                                                <img src={imgSrc} alt={member.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center bg-zinc-300 dark:bg-zinc-800">
+                                                    <UserCircle2 className="w-12 h-12 text-zinc-400" />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="space-y-1">
+                                            <h3 className="font-extrabold text-lg text-zinc-900 dark:text-white">{member.name}</h3>
+                                            <span className="block text-xs text-orange-600 font-bold uppercase tracking-wider">{member.role}</span>
+                                        </div>
+                                        <p className="text-xs sm:text-sm text-zinc-550 dark:text-zinc-400 leading-relaxed">
+                                            {member.bio}
+                                        </p>
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            )}
         </PublicLayout>
     );
 }

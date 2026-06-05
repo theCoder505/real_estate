@@ -160,3 +160,10 @@ button{
         @apply bg-background text-foreground;
     }
 }
+
+/* Google Maps Iframe responsiveness */
+.google-map-container iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: 0;
+}

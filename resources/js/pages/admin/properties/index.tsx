@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Head, useForm, router } from '@inertiajs/react';
+import { Head, useForm, router, usePage } from '@inertiajs/react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -23,6 +23,7 @@ interface Property {
     featured: boolean;
     features: string[];
     image_path: string;
+    images?: string[];
 }
 
 interface PropertiesIndexProps {
@@ -43,8 +44,14 @@ function PropertyForm({
     onCancel: () => void;
     mode: 'create' | 'edit';
 }) {
-    // Local state for the new image preview URL
+    const { settings } = usePage<any>().props;
+    const currencySym = settings?.currency_symbol || '$';
+
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
+    const [existingImages, setExistingImages] = useState<string[]>(
+        initial?.images && Array.isArray(initial.images) ? initial.images : []
+    );
 
     const { data, setData, post, processing, errors, transform } = useForm({
         _method: mode === 'edit' ? 'PUT' : 'POST',
@@ -60,6 +67,8 @@ function PropertyForm({
         featured: initial?.featured ? '1' : '0',
         features: initial?.features?.join(', ') || '',
         image: null as File | null,
+        gallery_images: [] as File[],
+        remove_images: [] as string[],
     });
 
     transform((data) => ({
@@ -73,7 +82,6 @@ function PropertyForm({
         const file = e.target.files?.[0] || null;
         setData('image', file);
 
-        // Revoke previous object URL to avoid memory leaks
         if (imagePreview) URL.revokeObjectURL(imagePreview);
 
         if (file) {
@@ -87,15 +95,33 @@ function PropertyForm({
         if (imagePreview) URL.revokeObjectURL(imagePreview);
         setImagePreview(null);
         setData('image', null);
-        // Reset the file input
         const fileInput = document.getElementById('property-image-input') as HTMLInputElement;
         if (fileInput) fileInput.value = '';
     };
 
-    // Determine what to show in the preview area:
-    // 1. Newly selected file preview takes priority
-    // 2. Existing image_path from DB (edit mode)
-    // 3. Nothing (create mode, no file picked)
+    const handleGalleryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files || []);
+        if (files.length === 0) return;
+
+        setData('gallery_images', [...(data.gallery_images || []), ...files]);
+
+        const newPreviews = files.map(file => URL.createObjectURL(file));
+        setGalleryPreviews(prev => [...prev, ...newPreviews]);
+    };
+
+    const handleRemoveNewGalleryImage = (idx: number) => {
+        const updatedFiles = data.gallery_images.filter((_, i) => i !== idx);
+        setData('gallery_images', updatedFiles);
+
+        URL.revokeObjectURL(galleryPreviews[idx]);
+        setGalleryPreviews(prev => prev.filter((_, i) => i !== idx));
+    };
+
+    const handleRemoveExistingImage = (path: string) => {
+        setExistingImages(prev => prev.filter(img => img !== path));
+        setData('remove_images', [...(data.remove_images || []), path]);
+    };
+
     const existingImageSrc = initial?.image_path
         ? (initial.image_path.startsWith('http') ? initial.image_path : `/${initial.image_path}`)
         : null;
@@ -110,6 +136,10 @@ function PropertyForm({
             forceFormData: true,
             preserveScroll: true,
             onSuccess: () => {
+                // Revoke object URLs to avoid memory leaks
+                if (imagePreview) URL.revokeObjectURL(imagePreview);
+                galleryPreviews.forEach(preview => URL.revokeObjectURL(preview));
+
                 Swal.fire({
                     icon: 'success',
                     title: 'Done!',
@@ -146,7 +176,7 @@ function PropertyForm({
                     </select>
                 </div>
                 <div className="space-y-1">
-                    <Label>Price ($)</Label>
+                    <Label>Price ({currencySym})</Label>
                     <Input type="number" value={data.price} onChange={e => setData('price', e.target.value)} placeholder="450000" />
                     {errors.price && <p className="text-xs text-red-500">{errors.price}</p>}
                 </div>
@@ -192,11 +222,9 @@ function PropertyForm({
                     {errors.description && <p className="text-xs text-red-500">{errors.description}</p>}
                 </div>
 
-                {/* ── Image Upload with Preview ── */}
+                {/* ── Main Cover Image ── */}
                 <div className="space-y-2 sm:col-span-2">
-                    <Label>Image</Label>
-
-                    {/* Preview area */}
+                    <Label>Cover Image</Label>
                     {(imagePreview || existingImageSrc) ? (
                         <div className="relative rounded-lg overflow-hidden bg-zinc-100 border border-border">
                             <img
@@ -205,11 +233,9 @@ function PropertyForm({
                                 className="w-full h-48 object-cover"
                                 onError={e => { e.currentTarget.src = 'https://placehold.co/640x200?text=Invalid+Image'; }}
                             />
-                            {/* Badge: shows which image is displayed */}
                             <span className={`absolute top-2 left-2 text-xs font-semibold px-2 py-0.5 rounded-full text-white ${imagePreview ? 'bg-orange-500' : 'bg-zinc-600'}`}>
                                 {imagePreview ? 'New image' : 'Current image'}
                             </span>
-                            {/* Remove new image button — only show when a new file is picked */}
                             {imagePreview && (
                                 <button
                                     type="button"
@@ -222,7 +248,6 @@ function PropertyForm({
                             )}
                         </div>
                     ) : (
-                        /* Empty state placeholder when no image at all */
                         <div className="flex flex-col items-center justify-center h-48 rounded-lg border-2 border-dashed border-border bg-muted/30 text-muted-foreground gap-2">
                             <ImageIcon className="w-10 h-10 opacity-30" />
                             <p className="text-sm">No image selected</p>
@@ -236,12 +261,70 @@ function PropertyForm({
                         onChange={handleImageChange}
                     />
                     {errors.image && <p className="text-xs text-red-500">{errors.image}</p>}
-                    {mode === 'edit' && !imagePreview && (
-                        <p className="text-xs text-muted-foreground">Leave empty to keep the existing image.</p>
+                </div>
+
+                {/* ── Gallery Images ── */}
+                <div className="space-y-2 sm:col-span-2 border-t pt-4 mt-2">
+                    <Label className="font-bold text-sm">Property Photo Gallery</Label>
+
+                    {/* Existing Gallery Images */}
+                    {existingImages.length > 0 && (
+                        <div className="space-y-1">
+                            <span className="text-xs text-muted-foreground font-semibold">Existing Gallery:</span>
+                            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                                {existingImages.map((path, idx) => {
+                                    const src = path.startsWith('http') ? path : `/${path}`;
+                                    return (
+                                        <div key={idx} className="relative aspect-video rounded-lg overflow-hidden border bg-zinc-50">
+                                            <img src={src} alt="Gallery item" className="w-full h-full object-cover" />
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRemoveExistingImage(path)}
+                                                className="absolute top-1 right-1 bg-red-650 hover:bg-red-750 text-white rounded-full p-1 transition-colors"
+                                                title="Delete this image"
+                                            >
+                                                <X className="w-3.5 h-3.5" />
+                                            </button>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
                     )}
-                    {imagePreview && (
-                        <p className="text-xs text-orange-500">New image selected — this will replace the current one on save.</p>
+
+                    {/* New Gallery Previews */}
+                    {galleryPreviews.length > 0 && (
+                        <div className="space-y-1">
+                            <span className="text-xs text-orange-500 font-semibold">New Selected Gallery Images:</span>
+                            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                                {galleryPreviews.map((preview, idx) => (
+                                    <div key={idx} className="relative aspect-video rounded-lg overflow-hidden border bg-zinc-50">
+                                        <img src={preview} alt="New gallery preview" className="w-full h-full object-cover" />
+                                        <button
+                                            type="button"
+                                            onClick={() => handleRemoveNewGalleryImage(idx)}
+                                            className="absolute top-1 right-1 bg-red-650 hover:bg-red-750 text-white rounded-full p-1 transition-colors"
+                                            title="Remove this preview"
+                                        >
+                                            <X className="w-3.5 h-3.5" />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     )}
+
+                    {/* Multiple Files Selector */}
+                    <div className="flex flex-col gap-2 mt-2">
+                        <Input
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            onChange={handleGalleryChange}
+                            className="cursor-pointer"
+                        />
+                        <p className="text-xs text-muted-foreground">Select one or more images to add to the property photo gallery.</p>
+                    </div>
                 </div>
             </div>
 
@@ -256,6 +339,9 @@ function PropertyForm({
 }
 
 export default function PropertiesIndex({ properties }: PropertiesIndexProps) {
+    const { settings } = usePage<any>().props;
+    const currencySym = settings?.currency_symbol || '$';
+
     const [search, setSearch] = useState('');
     const [createOpen, setCreateOpen] = useState(false);
     const [editProperty, setEditProperty] = useState<Property | null>(null);
@@ -320,7 +406,7 @@ export default function PropertiesIndex({ properties }: PropertiesIndexProps) {
                         <Card key={property.id} className="overflow-hidden group">
                             <div className="relative aspect-[16/10] bg-zinc-100 overflow-hidden">
                                 <img
-                                    src={property.image_path?.startsWith('http') ? property.image_path : `${property.image_path}`}
+                                    src={property.image_path?.startsWith('http') ? property.image_path : `/${property.image_path}`}
                                     alt={property.title}
                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                     onError={e => { e.currentTarget.src = 'https://placehold.co/640x400?text=No+Image'; }}
@@ -343,7 +429,7 @@ export default function PropertiesIndex({ properties }: PropertiesIndexProps) {
                                     <span className="flex items-center gap-1"><Maximize2 className="w-3.5 h-3.5" />{property.sqft} sqft</span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="font-extrabold text-orange-600">${Number(property.price).toLocaleString()}</span>
+                                    <span className="font-extrabold text-orange-600">{currencySym}{Number(property.price).toLocaleString()}</span>
                                     <div className="flex gap-2">
                                         <Button size="sm" variant="outline" className="h-8 w-8 p-0" onClick={() => setEditProperty(property)}>
                                             <Pencil className="w-3.5 h-3.5" />

@@ -19,6 +19,17 @@ class Setting extends Model
         'google_map_iframe',
         'logo_path',
         'icon_path',
+        'broker_name',
+        'broker_image_path',
+        'our_journey',
+        'years_of_experience',
+        'building_finished',
+        'satisfied_clients',
+        'expert_agents',
+        'our_mission',
+        'our_vision',
+        'currency_code',
+        'currency_symbol',
     ];
 
     protected $casts = [

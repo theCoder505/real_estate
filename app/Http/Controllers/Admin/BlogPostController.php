@@ -42,7 +42,7 @@ class BlogPostController extends Controller
         return redirect()->route('admin.blog.index')->with('success', 'Blog post created successfully.');
     }
 
-    public function update(Request $request, BlogPost $blogPost)
+    public function update(Request $request, BlogPost $blog)
     {
         try {
             $validated = $request->validate([
@@ -60,8 +60,8 @@ class BlogPostController extends Controller
             // Handle image upload
             if ($request->hasFile('image')) {
                 // Delete old image if exists and is local
-                if ($blogPost->image_path && !str_contains($blogPost->image_path, 'http')) {
-                    $oldImagePath = public_path($blogPost->image_path);
+                if ($blog->image_path && !str_contains($blog->image_path, 'http')) {
+                    $oldImagePath = public_path($blog->image_path);
                     if (File::exists($oldImagePath)) {
                         File::delete($oldImagePath);
                     }
@@ -74,22 +74,22 @@ class BlogPostController extends Controller
                 $validated['image_path'] = '/assets/images/' . $filename;
             }
 
-            $blogPost->update($validated);
+            $blog->update($validated);
             return redirect()->route('admin.blog.index')->with('success', 'Blog post updated successfully.');
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Failed to update blog post: ' . $e->getMessage()]);
         }
     }
 
-    public function destroy(BlogPost $blogPost)
+    public function destroy(BlogPost $blog)
     {
-        if ($blogPost->image_path && !str_contains($blogPost->image_path, 'http')) {
-            $imagePath = public_path($blogPost->image_path);
+        if ($blog->image_path && !str_contains($blog->image_path, 'http')) {
+            $imagePath = public_path($blog->image_path);
             if (File::exists($imagePath)) {
                 File::delete($imagePath);
             }
         }
-        $blogPost->delete();
+        $blog->delete();
         return redirect()->route('admin.blog.index')->with('success', 'Blog post deleted successfully.');
     }
 }

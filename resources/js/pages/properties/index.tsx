@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Head, Link, router } from '@inertiajs/react';
+import React, { useState } from 'react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import PublicLayout from '@/layouts/public-layout';
 import { Search, MapPin, BedDouble, Bath, Square, ArrowRight, SlidersHorizontal, RotateCcw } from 'lucide-react';
 
@@ -31,6 +31,9 @@ interface PropertiesProps {
 }
 
 export default function Index({ properties, filters }: PropertiesProps) {
+    const { settings } = usePage<any>().props;
+    const currencySym = settings?.currency_symbol || '$';
+
     const [search, setSearch] = useState(filters.search || '');
     const [type, setType] = useState(filters.type || 'all');
     const [priceMax, setPriceMax] = useState(filters.price_max || '');
@@ -126,7 +129,7 @@ export default function Index({ properties, filters }: PropertiesProps) {
                                         placeholder="e.g. Miami, Austin, flat..."
                                         value={search}
                                         onChange={(e) => setSearch(e.target.value)}
-                                        className="w-full bg-white dark:bg-zinc-950 border border-zinc-250 dark:border-zinc-800 rounded-xl py-3 pl-10 pr-4 text-sm text-zinc-800 dark:text-zinc-200 outline-none focus:border-orange-500 transition-colors"
+                                        className="w-full bg-white dark:bg-zinc-950 border border-zinc-250 dark:border-zinc-800 rounded-xl py-3 pl-10 pr-4 text-sm text-zinc-850 dark:text-zinc-200 outline-none focus:border-orange-500 transition-colors"
                                     />
                                     <Search className="w-4.5 h-4.5 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                                 </div>
@@ -134,13 +137,13 @@ export default function Index({ properties, filters }: PropertiesProps) {
 
                             {/* Max Price */}
                             <div className="md:col-span-4 space-y-2">
-                                <label className="block text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Max Budget ($)</label>
+                                <label className="block text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Max Budget ({currencySym})</label>
                                 <input
                                     type="number"
                                     placeholder="e.g. 500000"
                                     value={priceMax}
                                     onChange={(e) => setPriceMax(e.target.value)}
-                                    className="w-full bg-white dark:bg-zinc-950 border border-zinc-250 dark:border-zinc-800 rounded-xl py-3 px-4 text-sm text-zinc-800 dark:text-zinc-200 outline-none focus:border-orange-500 transition-colors"
+                                    className="w-full bg-white dark:bg-zinc-950 border border-zinc-250 dark:border-zinc-800 rounded-xl py-3 px-4 text-sm text-zinc-850 dark:text-zinc-200 outline-none focus:border-orange-500 transition-colors"
                                 />
                             </div>
 
@@ -192,7 +195,7 @@ export default function Index({ properties, filters }: PropertiesProps) {
                                 >
                                     <div className="relative aspect-[16/10] overflow-hidden bg-zinc-100">
                                         <img
-                                            src={property.image_path}
+                                            src={property.image_path?.startsWith('http') ? property.image_path : `${property.image_path}`}
                                             alt={property.title}
                                             className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
                                             loading="lazy"
@@ -204,7 +207,7 @@ export default function Index({ properties, filters }: PropertiesProps) {
                                             {property.type}
                                         </span>
                                         <div className="absolute bottom-4 left-4 bg-zinc-900/90 backdrop-blur-sm text-orange-400 font-extrabold text-lg px-4 py-1.5 rounded-xl">
-                                            ${property.price.toLocaleString()}
+                                            {currencySym}{Number(property.price).toLocaleString()}
                                         </div>
                                     </div>
 
